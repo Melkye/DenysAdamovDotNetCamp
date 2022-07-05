@@ -1,0 +1,4 @@
+Title     |Price     |Weight (g)|DaysBeforeSpoil / Meat Cat    |Meat type |
+Product   |$1.10     |10.1      |
+Dairy     |$2.20     |20.2      |10                            
+Meat      |$3.30     |30.3      |Highest                       |Veal      |

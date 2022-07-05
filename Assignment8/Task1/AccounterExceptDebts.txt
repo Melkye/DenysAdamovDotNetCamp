@@ -1,0 +1,3 @@
+Owner          |Total debt     |Days since measurenent
+Lesia          |420            |276            
+Olha           |790            |276            

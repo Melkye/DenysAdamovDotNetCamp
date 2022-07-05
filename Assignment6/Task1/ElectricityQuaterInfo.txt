@@ -1,0 +1,7 @@
+Flat Number    |Owner          |Start number   |End number     |Month     |Price     
+1              |Taras          |1814           |1861           |September |371.3     
+2              |Ivan           |1856           |1916           |September |474       
+3              |Lesia          |1871           |1913           |September |331.8     
+4              |Olha           |1863           |1942           |September |624.1     
+1              |Taras          |1861           |1861           |October   |0         
+2              |Ivan           |1916           |1954           |October   |300.2     

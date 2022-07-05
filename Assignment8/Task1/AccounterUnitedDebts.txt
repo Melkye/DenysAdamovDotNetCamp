@@ -1,0 +1,7 @@
+Owner          |Total debt     |Days since measurenent
+Taras          |470            |276            
+Ivan           |600            |277            
+Lesia          |420            |276            
+Olha           |790            |276            
+Les            |500            |49436          
+Mykola         |450            |47313          
