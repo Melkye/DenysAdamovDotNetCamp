@@ -27,20 +27,17 @@
 
                     if (attendances.ContainsKey(ipAddress))
                     {
-                        if (attendances[ipAddress].ContainsKey(day))
+                        if (!attendances[ipAddress].ContainsKey(day))
                         {
-                            attendances[ipAddress][day].Add(time);
+                            attendances[ipAddress][day] = new List<TimeOnly>();
                         }
-                        else
-                        {
-                            attendances[ipAddress].Add(day, new List<TimeOnly>() { time });
-                        }
+                        attendances[ipAddress][day].Add(time);
                     }
                     else
                     {
                         Dictionary<DayOfWeek, List<TimeOnly>> ipVisits = new();
-                        ipVisits.Add(day, new List<TimeOnly>() { time });
-                        attendances.Add(ipAddress, ipVisits);
+                        ipVisits[day] = new List<TimeOnly>() { time };
+                        attendances[ipAddress] = ipVisits;
                     }
                 }
             }
@@ -100,7 +97,7 @@
                         }
                         else
                         {
-                            ipVisitsPerHour.Add(hourStart, 1);
+                            ipVisitsPerHour[hourStart] = 1;
                         }
                     }
                 }
@@ -134,7 +131,7 @@
                             }
                             else
                             {
-                                visitsPerHour.Add(hourStart, 1);
+                                visitsPerHour[hourStart] = 1;
                             }
                         }
                     }
