@@ -1,0 +1,15 @@
+﻿omelette
+egg 300
+salt 5
+
+borsch
+beetroot 300
+cabbage 300
+carrot 200
+onion 200
+
+salad
+cucumber 200
+cabbage 300
+salt 5
+oil 30

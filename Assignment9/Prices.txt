@@ -1,0 +1,10 @@
+﻿beetroot 30
+carrot 20
+cucumber 45
+cabbage 35
+tomato 55
+onion 18
+egg 30
+milk 30
+salt 20
+oil 33

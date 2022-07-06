@@ -24,7 +24,26 @@ namespace Assignment9
                 }
                 else
                 {
-                    price += ingredientPrice * dish.Ingredients[ingredientTitle];
+                    price += ingredientPrice * dish.Ingredients[ingredientTitle] / 1000;
+                }
+            }
+            return true;
+        }
+        public static bool TryGetDishIngredientsMassAndCost(Dish dish, PriceList priceList, out Dictionary<string, (double mass, double price)>? ingredientsInfo)
+        {
+            ingredientsInfo = new();
+            foreach (string ingredientTitle in dish.Ingredients.Keys)
+            {
+                if (!TryGetProductPrice(ingredientTitle, priceList, out double ingredientPrice))
+                {
+                    ingredientsInfo = default;
+                    return false;
+                }
+                else
+                {
+                    double ingredientMass = dish.Ingredients[ingredientTitle];
+                    double ingredientPricePerMass = ingredientPrice * ingredientMass / 1000;
+                    ingredientsInfo[ingredientTitle] = (ingredientMass, ingredientPricePerMass);
                 }
             }
             return true;
@@ -42,6 +61,35 @@ namespace Assignment9
                 else
                 {
                     price += dishPrice;
+                }
+            }
+            return true;
+        }
+        public static bool TryGetMenuIngredientsMassAndCost(Menu menu, PriceList priceList, out Dictionary<string, (double mass, double price)>? menuIngredientsInfo)
+        {
+            menuIngredientsInfo = new();
+            foreach(Dish dish in menu.Dishes)
+            {
+                if(!TryGetDishIngredientsMassAndCost(dish, priceList, out Dictionary<string, (double mass, double price)>? dishIngredientsInfo))
+                {
+                    menuIngredientsInfo = default;
+                    return false;
+                }
+                else
+                {
+                    foreach(KeyValuePair<string, (double mass, double price)> dishIngredientInfo in dishIngredientsInfo)
+                    {
+                        (double dishIngredientMass, double dishIngredientPrice) = dishIngredientInfo.Value;
+                        if (menuIngredientsInfo.ContainsKey(dishIngredientInfo.Key))
+                        {
+                            (double massSoFar, double priceSoFar) = menuIngredientsInfo[dishIngredientInfo.Key];
+                            menuIngredientsInfo[dishIngredientInfo.Key] = (massSoFar + dishIngredientMass, priceSoFar + dishIngredientPrice);
+                        }
+                        else
+                        {
+                            menuIngredientsInfo[dishIngredientInfo.Key] = (dishIngredientMass, dishIngredientPrice);
+                        }
+                    }
                 }
             }
             return true;

@@ -8,20 +8,32 @@ namespace Assignment9
 {
     internal class Menu
     {
+
+        private FileWorker _fileWorker;
         private List<Dish> _dishes = new List<Dish>(); // use set to have unique dishes
         //public Menu()
         //{
         //    _dishes = new();
         //}
-        public Menu(List<Dish> dishes)
+        //public Menu(List<Dish> dishes)
+        //{
+        //    _dishes = new(dishes);
+        //}
+        public Menu(FileWorker fileWorker)
         {
-            _dishes = new(dishes);
+            _fileWorker = fileWorker; // use the passed fileworker or create own copy?
+            ReadFromFile();
         }
 
-        // copying and returning the whole collectuin seems too heavy, how to avoid this?
+        // copying and returning the whole collection seems too heavy, how to avoid this?
         // suppose using Iterator pattern
         public List<Dish> Dishes => new (_dishes);
-        // when return List<> and whrn return IEnumerable<>?
+        // when return List<> and when return IEnumerable<>?
         // public IEnumerable<Dish> Dishes => new List<Dish>(_dishes);
+
+        public void ReadFromFile()
+        {
+            _dishes = _fileWorker.ReadMenuFromFile();
+        }
     }
 }

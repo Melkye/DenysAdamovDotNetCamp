@@ -2,16 +2,22 @@
 {
     internal class Dish
     {
-        private Dictionary<string, double> _ingredients; // title and mass in kg
+        private Dictionary<string, double> _ingredients; // title and mass in g
         //public Dish()
         //{
         //    _ingredients = new();
         //}
-        public Dish(Dictionary<string, double> ingredients)
+        public Dish(string title, Dictionary<string, double> ingredients)
         {
+            Title = title;
             _ingredients = new(ingredients);
         }
-        // copying and returning the whole collectuin seems too heavy, how to avoid this?
+        //public Dish(FileWorker fileWorker)
+        //{
+        //    _fileWorker = fileWorker;
+        //}
+        public string Title { get; private set; }
+        // copying and returning the whole collection seems too heavy, how to avoid this?
         // suppose using Iterator pattern
         public Dictionary<string, double> Ingredients => new(_ingredients);
     }
