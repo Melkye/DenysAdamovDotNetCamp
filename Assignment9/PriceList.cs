@@ -10,7 +10,7 @@ namespace Assignment9
     {
 
         private FileWorker _fileWorker;
-        public Dictionary<string, double> _products; // title and price per 1 kg
+        private Dictionary<string, double> _products; // title and price per 1 kg
         //public PriceList()
         //{
         //    _products = new();
@@ -23,6 +23,11 @@ namespace Assignment9
         {
             _fileWorker = fileWorker; // use the passed fileworker or create own copy?
             ReadFromFile();
+        }
+        public PriceList(PriceList copyList)
+        {
+            _fileWorker = new(copyList._fileWorker); // create own copy?
+            _products = new(copyList._products); // create own copy?
         }
         // copying and returning the whole collection seems too heavy, how to avoid this?
         // suppose using Iterator pattern

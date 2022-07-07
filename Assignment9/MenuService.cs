@@ -6,18 +6,57 @@ using System.Threading.Tasks;
 
 namespace Assignment9
 {
-    internal static class MenuService
+    internal class MenuService
     {
-        public static bool TryGetProductPrice(string productTitle, PriceList priceList, out double price)
+        private PriceList _priceList;
+        private Menu _menu;
+        private CurrencyExchanger _currencyExchanger; // suppose this should not be here
+        public MenuService(PriceList priceList, Menu menu, CurrencyExchanger currencyExchanger)
         {
-            return priceList.Products.TryGetValue(productTitle, out price);
+            PriceList = priceList;
+            Menu = menu;
+            CurrencyExchanger = currencyExchanger;
         }
-        public static bool TryGetDishCost(Dish dish, PriceList priceList, out double price)
+        public MenuService(FileWorker fileWorker) // do we even need this?
+        {
+            PriceList = new(fileWorker);
+            Menu = new(fileWorker);
+            CurrencyExchanger = new(fileWorker);
+        }
+        public PriceList PriceList
+        {
+            get => new(_priceList);
+            set => _priceList = value is not null ? value : _priceList; // reassigning? if so, guess better use only if-conditional
+        }
+        public Menu Menu
+        {
+            get => new(_menu);
+            set => _menu = value is not null ? value : _menu; // reassigning? if so, guess better use only if-conditional
+        }
+        public CurrencyExchanger CurrencyExchanger
+        {
+            get => new(_currencyExchanger);
+            set => _currencyExchanger = value is not null ? value : _currencyExchanger; // reassigning? if so, guess better use only if-conditional
+        }
+        public bool TryGetProductPrice(string productTitle, out double price) // get UAH without currency?
+        {
+            return _priceList.Products.TryGetValue(productTitle, out price); // add summmary that it returns UAH
+        }
+        public bool TryGetProductPrice(string productTitle, Currency currency, out double price) // get UAH without currency?
+        {
+            bool isFetchSuccessful = TryGetProductPrice(productTitle, out price); // fetch price in specified currency + how will it be printed? all dollars?
+            if (isFetchSuccessful)
+            {
+                price = _currencyExchanger.ExchangeUAH(price, currency);
+            }
+            return isFetchSuccessful;
+        }
+        public bool TryGetDishCost(Dish dish, out double price)
         {
             price = 0.0;
             foreach (string ingredientTitle in dish.Ingredients.Keys)
             {
-                if (!TryGetProductPrice(ingredientTitle, priceList, out double ingredientPrice))
+                if (!TryGetProductPrice(ingredientTitle, out double ingredientPrice))
                 {
                     price = default;
                     return false;
@@ -29,12 +68,21 @@ namespace Assignment9
             }
             return true;
         }
-        public static bool TryGetDishIngredientsMassAndCost(Dish dish, PriceList priceList, out Dictionary<string, (double mass, double price)>? ingredientsInfo)
+        public bool TryGetDishCost(Dish dish, Currency currency, out double price)
+        {
+            bool isFetchSuccessful = TryGetDishCost(dish, out price);
+            if (isFetchSuccessful)
+            {
+                price = _currencyExchanger.ExchangeUAH(price, currency);
+            }
+            return isFetchSuccessful;
+        }
+        public bool TryGetDishIngredientsMassAndCost(Dish dish, out Dictionary<string, (double mass, double price)>? ingredientsInfo)
         {
             ingredientsInfo = new();
             foreach (string ingredientTitle in dish.Ingredients.Keys)
             {
-                if (!TryGetProductPrice(ingredientTitle, priceList, out double ingredientPrice))
+                if (!TryGetProductPrice(ingredientTitle, out double ingredientPrice))
                 {
                     ingredientsInfo = default;
                     return false;
@@ -48,12 +96,25 @@ namespace Assignment9
             }
             return true;
         }
-        public static bool TryGetTotalCost(Menu menu, PriceList priceList, out double price)
+        public bool TryGetDishIngredientsMassAndCost(Dish dish, Currency currency, out Dictionary<string, (double mass, double price)>? ingredientsInfo)
+        {
+            bool isFetchSuccessful = TryGetDishIngredientsMassAndCost(dish, out ingredientsInfo); // maybe better not use other method here but set all prices in-place?
+            if (isFetchSuccessful)
+            {
+                foreach (KeyValuePair<string, (double mass, double price)> ing in ingredientsInfo)
+                {
+                    double exchangedPrice = _currencyExchanger.ExchangeUAH(ing.Value.price, currency);
+                    ingredientsInfo[ing.Key] = (ing.Value.mass, exchangedPrice);
+                }
+            }
+            return isFetchSuccessful;
+        }
+        public bool TryGetTotalCost(out double price)
         {
             price = 0.0;
-            foreach(Dish dish in menu.Dishes)
+            foreach(Dish dish in _menu.Dishes)
             {
-                if(!TryGetDishCost(dish, priceList, out double dishPrice))
+                if(!TryGetDishCost(dish, out double dishPrice))
                 {
                     price = default;
                     return false;
@@ -65,12 +126,22 @@ namespace Assignment9
             }
             return true;
         }
-        public static bool TryGetMenuIngredientsMassAndCost(Menu menu, PriceList priceList, out Dictionary<string, (double mass, double price)>? menuIngredientsInfo)
+        public bool TryGetTotalCost(Currency currency, out double price)
+        {
+            bool isFetchSuccessful = TryGetTotalCost(out price);
+            if (isFetchSuccessful)
+            {
+                price = _currencyExchanger.ExchangeUAH(price, currency);
+            }
+            return isFetchSuccessful;
+
+        }
+        public bool TryGetMenuIngredientsMassAndCost(out Dictionary<string, (double mass, double price)>? menuIngredientsInfo)
         {
             menuIngredientsInfo = new();
-            foreach(Dish dish in menu.Dishes)
+            foreach(Dish dish in _menu.Dishes)
             {
-                if(!TryGetDishIngredientsMassAndCost(dish, priceList, out Dictionary<string, (double mass, double price)>? dishIngredientsInfo))
+                if(!TryGetDishIngredientsMassAndCost(dish, out Dictionary<string, (double mass, double price)>? dishIngredientsInfo))
                 {
                     menuIngredientsInfo = default;
                     return false;
@@ -93,6 +164,19 @@ namespace Assignment9
                 }
             }
             return true;
+        }
+        public bool TryGetMenuIngredientsMassAndCost(Currency currency, out Dictionary<string, (double mass, double price)>? menuIngredientsInfo)
+        {
+            bool isFetchSuccessful = TryGetMenuIngredientsMassAndCost(out menuIngredientsInfo); // use non-currency method or duplicate code but change 1 line there?
+            if(isFetchSuccessful)
+            {
+                foreach (KeyValuePair<string, (double mass, double price)> ing in menuIngredientsInfo)
+                {
+                    double exchangedPrice = _currencyExchanger.ExchangeUAH(ing.Value.price, currency);
+                    menuIngredientsInfo[ing.Key] = (ing.Value.mass, exchangedPrice);
+                }
+            }
+            return isFetchSuccessful;
         }
     }
 }

@@ -9,14 +9,22 @@ namespace Assignment9
     /// <summary>
     /// Works as a simulation of db connection
     /// </summary>
-    internal class FileWorker
+    internal class FileWorker // maybe add properties to replace files
     {
         private string _pricesFile;
         private string _menuFile;
-        public FileWorker(string pricesFile, string menuFile)
+        private string _exchangeRatesFile;
+        public FileWorker(string pricesFile, string menuFile, string exchangeRatesFile)
         {
             _pricesFile = pricesFile;
             _menuFile = menuFile;
+            _exchangeRatesFile = exchangeRatesFile;
+        }
+        public FileWorker(FileWorker copyWorker)
+        {
+            _pricesFile = copyWorker._pricesFile;
+            _menuFile = copyWorker._menuFile;
+            _exchangeRatesFile = copyWorker._exchangeRatesFile;
         }
         public Dictionary<string, double> ReadPricesFromFile()
         {
@@ -69,6 +77,21 @@ namespace Assignment9
                 ingredients[title] = mass;                
             }
             return new Dish(dishTitle, ingredients);
+        }
+        public Dictionary<Currency, double> ReadExchangeRatesFromFile() // add exception handling
+        {
+            Dictionary<Currency, double> exchangeRates = new();
+            using (StreamReader file = new StreamReader(_exchangeRatesFile))
+            {
+                while (!file.EndOfStream)
+                {
+                    string line = file.ReadLine();
+                    string[] currencyInfo = line.Trim().Split();
+                    Currency currency = (Currency)Enum.Parse(typeof(Currency), currencyInfo[0]);
+                    exchangeRates[currency] = double.Parse(currencyInfo[1]);
+                }
+            }
+            return exchangeRates;
         }
     }
 }

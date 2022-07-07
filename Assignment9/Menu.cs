@@ -24,6 +24,11 @@ namespace Assignment9
             _fileWorker = fileWorker; // use the passed fileworker or create own copy?
             ReadFromFile();
         }
+        public Menu(Menu copyMenu)
+        {
+            _fileWorker = new(copyMenu._fileWorker); // create own copy?
+            _dishes = new(copyMenu._dishes); // create own copy?
+        }
 
         // copying and returning the whole collection seems too heavy, how to avoid this?
         // suppose using Iterator pattern
