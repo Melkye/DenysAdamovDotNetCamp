@@ -93,7 +93,7 @@ namespace Assignment9
         public Dictionary<Currency, double> ReadExchangeRatesFromFile() // add exception handling
         {
             Dictionary<Currency, double> exchangeRates = new();
-            using (StreamReader file = new StreamReader(_exchangeRatesFile))
+            using (StreamReader file = new(_exchangeRatesFile))
             {
                 while (!file.EndOfStream)
                 {
@@ -104,6 +104,13 @@ namespace Assignment9
                 }
             }
             return exchangeRates;
+        }
+        public void AddPriceToFile(KeyValuePair<string, double> product)
+        {
+            using (StreamWriter file = new(_pricesFile, append: true))
+            {
+                file.WriteLine(product.Key + " " + product.Value.ToString());
+            }
         }
         public void SaveMenuIngredientsMassAndCostToFile(Dictionary<string, (double mass, double price)> menuIngredientsInfo, Currency currency = Currency.UAH)
         {

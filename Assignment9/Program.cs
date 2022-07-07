@@ -43,19 +43,74 @@ string needsFile = Path.GetFullPath("../../../Result.txt");
 
 MenuService ms = new(new DbSimulator(pricesFile, menuFile, exchangeRatesFile, needsFile));
 
-ms.TryGetTotalCost(out double totalMenuCost);
+//ms.TryGetTotalCost(out double totalMenuCost);
 
-ms.TryGetProductPrice("onion", out double priceUAH);
-ms.TryGetProductPrice("oni ono", Currency.USD, out double priceUSD);
-ms.TryGetProductPrice("onion", Currency.EUR, out double priceEUR);
+//ms.TryGetProductPrice("onion", out double priceUAH);
+//ms.TryGetProductPrice("oni ono", Currency.USD, out double priceUSD);
+//ms.TryGetProductPrice("onion", Currency.EUR, out double priceEUR);
 
-Dictionary<string, (double mass, double price)>? menuIngredientsInfo;
-Dictionary<string, (double mass, double price)>? menuIngredientsInfoUSD;
-Dictionary<string, (double mass, double price)>? menuIngredientsInfoEUR;
-var menuInfo = ms.TryGetMenuIngredientsMassAndCost(out menuIngredientsInfo);
-var menuInfoUSD = ms.TryGetMenuIngredientsMassAndCost(Currency.USD, out menuIngredientsInfoUSD);
-var menuInfoEUR = ms.TryGetMenuIngredientsMassAndCost(Currency.EUR, out menuIngredientsInfoEUR);
+//Dictionary<string, (double mass, double price)>? menuIngredientsInfo;
+//Dictionary<string, (double mass, double price)>? menuIngredientsInfoUSD;
+//Dictionary<string, (double mass, double price)>? menuIngredientsInfoEUR;
+//var menuInfo = ms.TryGetMenuIngredientsMassAndCost(out menuIngredientsInfo);
+//var menuInfoUSD = ms.TryGetMenuIngredientsMassAndCost(Currency.USD, out menuIngredientsInfoUSD);
+//var menuInfoEUR = ms.TryGetMenuIngredientsMassAndCost(Currency.EUR, out menuIngredientsInfoEUR);
+bool userTriedToResolve = false;
+bool noProblemOccured = false;
+while (!noProblemOccured && !userTriedToResolve)
+{
+    try
+    {
+        double priceUAH = ms.GetProductPrice("onion");
+        double priceUSD = ms.GetProductPrice("onion", Currency.USD);
 
-//ms.SaveMenuIngredientsMassAndCostToFile(Currency.EUR);
+        Dictionary<string, (double mass, double price)>? menuIngredientsInfo;
+        Dictionary<string, (double mass, double price)>? menuIngredientsInfoUSD;
 
-Console.WriteLine("");
+        menuIngredientsInfo = ms.GetMenuIngredientsMassAndCost();
+        menuIngredientsInfoUSD = ms.GetMenuIngredientsMassAndCost(Currency.USD);
+
+        noProblemOccured = true;
+        Console.WriteLine("");
+    }
+    //catch (InvalidOperationException ex) when (ex.InnerException is InvalidOperationException && ex.InnerException.InnerException is ArgumentException)
+    //{
+    //    Console.WriteLine(ex.InnerException.InnerException.Message);
+    //    throw ex.InnerException;
+    //}
+    //catch (InvalidOperationException ex) when (ex.InnerException is ArgumentException)
+    //{
+    //    Console.WriteLine(ex.InnerException.Message);
+    //    throw ex.InnerException;
+    //}
+    catch (ArgumentException ex)
+    {
+        Console.WriteLine(ex.Message);
+        string productTitle = ex.Message.Split()[^1];
+        if(!AddProductToPriceListWhenNotFound(ms, productTitle))
+        {
+            Console.WriteLine("Bad try");
+        }
+        userTriedToResolve = true;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+}
+
+static bool AddProductToPriceListWhenNotFound(MenuService ms, string productTitle)
+{
+    Console.WriteLine($"Let's add information about {productTitle} to storage");
+    Console.WriteLine("Enter its price per 1 kg:");
+    bool isInputSuccsessful = double.TryParse(Console.ReadLine(), out double price);
+    if (!isInputSuccsessful)
+    {
+        return false;
+    }
+    else
+    {
+        ms.AddPrice(new KeyValuePair<string, double>(productTitle, price));
+        return true;
+    }
+}
