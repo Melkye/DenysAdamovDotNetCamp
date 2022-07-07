@@ -8,46 +8,21 @@ namespace Assignment9
 {
     internal class MenuService
     {
-        private PriceList _priceList;
-        private Menu _menu;
-        private CurrencyExchanger _currencyExchanger; // suppose this should not be here
-        public MenuService(PriceList priceList, Menu menu, CurrencyExchanger currencyExchanger)
+        private DbSimulator _db;
+        public MenuService(DbSimulator db)
         {
-            PriceList = priceList;
-            Menu = menu;
-            CurrencyExchanger = currencyExchanger;
+               _db = new(db); // or just _db = db?
         }
-        public MenuService(FileWorker fileWorker) // do we even need this?
+        public bool TryGetProductPrice(string productTitle, out double price)
         {
-            PriceList = new(fileWorker);
-            Menu = new(fileWorker);
-            CurrencyExchanger = new(fileWorker);
-        }
-        public PriceList PriceList
-        {
-            get => new(_priceList);
-            set => _priceList = value is not null ? value : _priceList; // reassigning? if so, guess better use only if-conditional
-        }
-        public Menu Menu
-        {
-            get => new(_menu);
-            set => _menu = value is not null ? value : _menu; // reassigning? if so, guess better use only if-conditional
-        }
-        public CurrencyExchanger CurrencyExchanger
-        {
-            get => new(_currencyExchanger);
-            set => _currencyExchanger = value is not null ? value : _currencyExchanger; // reassigning? if so, guess better use only if-conditional
-        }
-        public bool TryGetProductPrice(string productTitle, out double price) // get UAH without currency?
-        {
-            return _priceList.Products.TryGetValue(productTitle, out price); // add summmary that it returns UAH
+            return _db.ProductPrices.Products.TryGetValue(productTitle, out price); // add summmary that it returns UAH
         }
         public bool TryGetProductPrice(string productTitle, Currency currency, out double price) // get UAH without currency?
         {
-            bool isFetchSuccessful = TryGetProductPrice(productTitle, out price); // fetch price in specified currency + how will it be printed? all dollars?
+            bool isFetchSuccessful = TryGetProductPrice(productTitle, out price);
             if (isFetchSuccessful)
             {
-                price = _currencyExchanger.ExchangeUAH(price, currency);
+                price = _db.CurrencyExchanger.ExchangeUAH(price, currency);
             }
             return isFetchSuccessful;
         }
@@ -73,7 +48,7 @@ namespace Assignment9
             bool isFetchSuccessful = TryGetDishCost(dish, out price);
             if (isFetchSuccessful)
             {
-                price = _currencyExchanger.ExchangeUAH(price, currency);
+                price = _db.CurrencyExchanger.ExchangeUAH(price, currency);
             }
             return isFetchSuccessful;
         }
@@ -103,7 +78,7 @@ namespace Assignment9
             {
                 foreach (KeyValuePair<string, (double mass, double price)> ing in ingredientsInfo)
                 {
-                    double exchangedPrice = _currencyExchanger.ExchangeUAH(ing.Value.price, currency);
+                    double exchangedPrice = _db.CurrencyExchanger.ExchangeUAH(ing.Value.price, currency);
                     ingredientsInfo[ing.Key] = (ing.Value.mass, exchangedPrice);
                 }
             }
@@ -112,7 +87,7 @@ namespace Assignment9
         public bool TryGetTotalCost(out double price)
         {
             price = 0.0;
-            foreach(Dish dish in _menu.Dishes)
+            foreach(Dish dish in _db.Menu.Dishes)
             {
                 if(!TryGetDishCost(dish, out double dishPrice))
                 {
@@ -131,7 +106,7 @@ namespace Assignment9
             bool isFetchSuccessful = TryGetTotalCost(out price);
             if (isFetchSuccessful)
             {
-                price = _currencyExchanger.ExchangeUAH(price, currency);
+                price = _db.CurrencyExchanger.ExchangeUAH(price, currency);
             }
             return isFetchSuccessful;
 
@@ -139,7 +114,7 @@ namespace Assignment9
         public bool TryGetMenuIngredientsMassAndCost(out Dictionary<string, (double mass, double price)>? menuIngredientsInfo)
         {
             menuIngredientsInfo = new();
-            foreach(Dish dish in _menu.Dishes)
+            foreach(Dish dish in _db.Menu.Dishes)
             {
                 if(!TryGetDishIngredientsMassAndCost(dish, out Dictionary<string, (double mass, double price)>? dishIngredientsInfo))
                 {
@@ -172,11 +147,27 @@ namespace Assignment9
             {
                 foreach (KeyValuePair<string, (double mass, double price)> ing in menuIngredientsInfo)
                 {
-                    double exchangedPrice = _currencyExchanger.ExchangeUAH(ing.Value.price, currency);
+                    double exchangedPrice = _db.CurrencyExchanger.ExchangeUAH(ing.Value.price, currency);
                     menuIngredientsInfo[ing.Key] = (ing.Value.mass, exchangedPrice);
                 }
             }
             return isFetchSuccessful;
+        }
+        public void SaveMenuIngredientsMassAndCostToFile()
+        {
+            bool isFetchSuccsessful = TryGetMenuIngredientsMassAndCost(out Dictionary<string, (double mass, double price)>? menuIngredientsInfo);
+            if (isFetchSuccsessful)
+            {
+                _db.SaveMenuIngredientsMassAndCostToFile(menuIngredientsInfo);
+            }
+        }
+        public void SaveMenuIngredientsMassAndCostToFile(Currency currency)
+        {
+            bool isFetchSuccsessful = TryGetMenuIngredientsMassAndCost(currency, out Dictionary<string, (double mass, double price)>? menuIngredientsInfo);
+            if (isFetchSuccsessful)
+            {
+                _db.SaveMenuIngredientsMassAndCostToFile(menuIngredientsInfo, currency); // passing currency only to print $ or ₴ sign
+            }
         }
     }
 }

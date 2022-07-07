@@ -2,21 +2,14 @@
 {
     internal class CurrencyExchanger
     {
-        private FileWorker _fileWorker;
         private Dictionary<Currency, double> _exchangeRates;
-        public CurrencyExchanger(FileWorker fileWorker)
+        public CurrencyExchanger(Dictionary<Currency, double> exchangeRates)
         {
-            _fileWorker = fileWorker;
-            ReadFromFile();
+            _exchangeRates = new(exchangeRates);
         }
         public CurrencyExchanger(CurrencyExchanger copyExchanger)
         {
-            _fileWorker = new(copyExchanger._fileWorker);
             _exchangeRates = new(copyExchanger._exchangeRates);
-        }
-        public void ReadFromFile()
-        {
-            _exchangeRates = _fileWorker.ReadExchangeRatesFromFile();
         }
         public double ExchangeUAH(double amount, Currency targetCurrency)
         {

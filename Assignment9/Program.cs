@@ -39,10 +39,9 @@
 string pricesFile = Path.GetFullPath("../../../Prices.txt");
 string menuFile = Path.GetFullPath("../../../Menu.txt");
 string exchangeRatesFile = Path.GetFullPath("../../../ExchangeRates.txt");
+string needsFile = Path.GetFullPath("../../../Result.txt");
 
-FileWorker fileWorker = new FileWorker(pricesFile, menuFile, exchangeRatesFile); // a-la db connection
-
-MenuService ms = new(fileWorker);
+MenuService ms = new(new DbSimulator(pricesFile, menuFile, exchangeRatesFile, needsFile));
 
 ms.TryGetTotalCost(out double totalMenuCost);
 
@@ -57,8 +56,6 @@ var menuInfo = ms.TryGetMenuIngredientsMassAndCost(out menuIngredientsInfo);
 var menuInfoUSD = ms.TryGetMenuIngredientsMassAndCost(Currency.USD, out menuIngredientsInfoUSD);
 var menuInfoEUR = ms.TryGetMenuIngredientsMassAndCost(Currency.EUR, out menuIngredientsInfoEUR);
 
-
-
-ms.PriceList = null;
+//ms.SaveMenuIngredientsMassAndCostToFile(Currency.EUR);
 
 Console.WriteLine("");

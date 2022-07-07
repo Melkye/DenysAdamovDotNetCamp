@@ -12,10 +12,6 @@
             Title = title;
             _ingredients = new(ingredients);
         }
-        //public Dish(FileWorker fileWorker)
-        //{
-        //    _fileWorker = fileWorker;
-        //}
         public string Title { get; private set; }
         // copying and returning the whole collection seems too heavy, how to avoid this?
         // suppose using Iterator pattern
