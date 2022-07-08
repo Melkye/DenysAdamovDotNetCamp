@@ -13,10 +13,6 @@ namespace Assignment9
         {
                _db = new(db); // or just _db = db?
         }
-        //public bool TryGetProductPrice(string productTitle, out double price)
-        //{
-        //    return _db.ProductPrices.Products.TryGetValue(productTitle, out price); // add summmary that it returns UAH
-        //}
         /// <summary>
         /// Returns product price in UAH
         /// </summary>
@@ -34,17 +30,7 @@ namespace Assignment9
             {
                 throw new ArgumentException("Product with specified title not found: " + productTitle);
             }
-
         }
-        //public bool TryGetProductPrice(string productTitle, Currency currency, out double price)
-        //{
-        //    bool isFetchSuccessful = TryGetProductPrice(productTitle, out price);
-        //    if (isFetchSuccessful)
-        //    {
-        //        price = _db.CurrencyExchanger.ExchangeUAH(price, currency);
-        //    }
-        //    return isFetchSuccessful;
-        //}
         /// <summary>
         /// Returns product price in <paramref name="currency"/>
         /// </summary>
@@ -59,28 +45,11 @@ namespace Assignment9
                 price = _db.CurrencyExchanger.ExchangeUAH(price, currency);
                 return price;
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 throw;
             }
         }
-        //public bool TryGetDishPrice(Dish dish, out double price)
-        //{
-        //    price = 0.0;
-        //    foreach (string ingredientTitle in dish.Ingredients.Keys)
-        //    {
-        //        if (!TryGetProductPrice(ingredientTitle, out double ingredientPrice))
-        //        {
-        //            price = default;
-        //            return false;
-        //        }
-        //        else
-        //        {
-        //            price += ingredientPrice * dish.Ingredients[ingredientTitle] / 1000;
-        //        }
-        //    }
-        //    return true;
-        //}
         /// <summary>
         /// Calculates the price of the dish by multiplying mass and price per 1 kg
         /// </summary>
@@ -99,20 +68,11 @@ namespace Assignment9
                 }
                 return price;
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
-                throw new InvalidOperationException("Unable to get price for the dish", e); // ok???
+                throw;
             }
         }
-        //public bool TryGetDishPrice(Dish dish, Currency currency, out double price)
-        //{
-        //    bool isFetchSuccessful = TryGetDishPrice(dish, out price);
-        //    if (isFetchSuccessful)
-        //    {
-        //        price = _db.CurrencyExchanger.ExchangeUAH(price, currency);
-        //    }
-        //    return isFetchSuccessful;
-        //}
         /// <summary>
         /// Calculates the price of the dish by multiplying mass and price per 1 kg
         /// </summary>
@@ -128,30 +88,11 @@ namespace Assignment9
                 return price;
 
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 throw;
             }
         }
-        //public bool TryGetDishIngredientsMassAndPrice(Dish dish, out Dictionary<string, (double mass, double price)>? ingredientsInfo)
-        //{
-        //    ingredientsInfo = new();
-        //    foreach (string ingredientTitle in dish.Ingredients.Keys)
-        //    {
-        //        if (!TryGetProductPrice(ingredientTitle, out double ingredientPrice))
-        //        {
-        //            ingredientsInfo = default;
-        //            return false;
-        //        }
-        //        else
-        //        {
-        //            double ingredientMass = dish.Ingredients[ingredientTitle];
-        //            double ingredientPricePerMass = ingredientPrice * ingredientMass / 1000;
-        //            ingredientsInfo[ingredientTitle] = (ingredientMass, ingredientPricePerMass);
-        //        }
-        //    }
-        //    return true;
-        //}
         /// <summary>
         /// Retrieves the mass in grams and calculates the price of each ingredient
         /// </summary>
@@ -169,26 +110,13 @@ namespace Assignment9
                     double ingredientPrice = GetProductPrice(ingredientTitle) * ingredientMass / 1000;
                     ingredientsInfo[ingredientTitle] = (ingredientMass, ingredientPrice);
                 }
-                catch (ArgumentException ex)
+                catch (ArgumentException)
                 {
                     throw;
                 }
             }
             return ingredientsInfo;
         }
-        //public bool TryGetDishIngredientsMassAndPrice(Dish dish, Currency currency, out Dictionary<string, (double mass, double price)>? ingredientsInfo)
-        //{
-        //    bool isFetchSuccessful = TryGetDishIngredientsMassAndPrice(dish, out ingredientsInfo); // maybe better not use other method here but set all prices in-place?
-        //    if (isFetchSuccessful)
-        //    {
-        //        foreach (KeyValuePair<string, (double mass, double price)> ing in ingredientsInfo)
-        //        {
-        //            double exchangedPrice = _db.CurrencyExchanger.ExchangeUAH(ing.Value.price, currency);
-        //            ingredientsInfo[ing.Key] = (ing.Value.mass, exchangedPrice);
-        //        }
-        //    }
-        //    return isFetchSuccessful;
-        //}
         /// <summary>
         /// Retrieves the mass in grams and calculates the price of each ingredient
         /// </summary>
@@ -208,67 +136,11 @@ namespace Assignment9
                 }
                 return ingredientsInfo;
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 throw;
             }
         }
-        //public bool TryGetTotalPrice(out double price)
-        //{
-        //    price = 0.0;
-        //    foreach(Dish dish in _db.Menu.Dishes)
-        //    {
-        //        if(!TryGetDishPrice(dish, out double dishPrice))
-        //        {
-        //            price = default;
-        //            return false;
-        //        }
-        //        else
-        //        {
-        //            price += dishPrice;
-        //        }
-        //    }
-        //    return true;
-        //}
-        //public bool TryGetTotalPrice(Currency currency, out double price)
-        //{
-        //    bool isFetchSuccessful = TryGetTotalPrice(out price);
-        //    if (isFetchSuccessful)
-        //    {
-        //        price = _db.CurrencyExchanger.ExchangeUAH(price, currency);
-        //    }
-        //    return isFetchSuccessful;
-
-        //}
-        //public bool TryGetMenuIngredientsMassAndPrice(out Dictionary<string, (double mass, double price)>? menuIngredientsInfo)
-        //{
-        //    menuIngredientsInfo = new();
-        //    foreach(Dish dish in _db.Menu.Dishes)
-        //    {
-        //        if(!TryGetDishIngredientsMassAndPrice(dish, out Dictionary<string, (double mass, double price)>? dishIngredientsInfo))
-        //        {
-        //            menuIngredientsInfo = default;
-        //            return false;
-        //        }
-        //        else
-        //        {
-        //            foreach(KeyValuePair<string, (double mass, double price)> dishIngredientInfo in dishIngredientsInfo)
-        //            {
-        //                (double dishIngredientMass, double dishIngredientPrice) = dishIngredientInfo.Value;
-        //                if (menuIngredientsInfo.ContainsKey(dishIngredientInfo.Key))
-        //                {
-        //                    (double massSoFar, double priceSoFar) = menuIngredientsInfo[dishIngredientInfo.Key];
-        //                    menuIngredientsInfo[dishIngredientInfo.Key] = (massSoFar + dishIngredientMass, priceSoFar + dishIngredientPrice);
-        //                }
-        //                else
-        //                {
-        //                    menuIngredientsInfo[dishIngredientInfo.Key] = (dishIngredientMass, dishIngredientPrice);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return true;
-        //}
         /// <summary>
         /// Calculates the mass and the price of each ingredient of each dish
         /// </summary>
@@ -296,26 +168,13 @@ namespace Assignment9
                         }
                     }
                 }
-                catch (ArgumentException ex)
+                catch (ArgumentException)
                 {
                     throw;
                 }
             }
             return menuIngredientsInfo;
         }
-        //public bool TryGetMenuIngredientsMassAndPrice(Currency currency, out Dictionary<string, (double mass, double price)>? menuIngredientsInfo)
-        //{
-        //    bool isFetchSuccessful = TryGetMenuIngredientsMassAndPrice(out menuIngredientsInfo); // use non-currency method or duplicate code but change 1 line there?
-        //    if(isFetchSuccessful)
-        //    {
-        //        foreach (KeyValuePair<string, (double mass, double price)> ing in menuIngredientsInfo)
-        //        {
-        //            double exchangedPrice = _db.CurrencyExchanger.ExchangeUAH(ing.Value.price, currency);
-        //            menuIngredientsInfo[ing.Key] = (ing.Value.mass, exchangedPrice);
-        //        }
-        //    }
-        //    return isFetchSuccessful;
-        //}
         /// <summary>
         /// Calculates the mass and the price of each ingredient of each dish
         /// </summary>
@@ -334,19 +193,11 @@ namespace Assignment9
                 }
                 return menuIngredientsInfo;
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 throw;
             }
         }
-        //public void SaveMenuIngredientsMassAndPriceToFile()
-        //{
-        //    bool isFetchSuccsessful = TryGetMenuIngredientsMassAndPrice(out Dictionary<string, (double mass, double price)>? menuIngredientsInfo);
-        //    if (isFetchSuccsessful)
-        //    {
-        //        _db.SaveMenuIngredientsMassAndPriceToFile(menuIngredientsInfo);
-        //    }
-        //}
         /// <summary>
         /// Writes the mass and the price of each ingredient of each dish to file
         /// </summary>
@@ -358,7 +209,7 @@ namespace Assignment9
                 Dictionary<string, (double mass, double price)>? menuIngredientsInfo = GetMenuIngredientsMassAndPrice(currency);
                 _db.SaveMenuIngredientsMassAndPriceToFile(menuIngredientsInfo, currency); // passing currency only to print $ or ₴ sign
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 throw;
             }

@@ -1,6 +1,6 @@
 ﻿namespace Assignment9
 {
-    internal class Dish
+    internal class Dish : IComparable<Dish>
     {
         private Dictionary<string, double> _ingredients; // title and mass in grams
         public Dish(string title, Dictionary<string, double> ingredients)
@@ -12,5 +12,10 @@
         // copying and returning the whole collection seems too heavy, how to avoid this?
         // suppose using Iterator pattern
         public Dictionary<string, double> Ingredients => new(_ingredients);
+
+        public int CompareTo(Dish? other)
+        {
+            return Title.CompareTo(other.Title);
+        }
     }
 }

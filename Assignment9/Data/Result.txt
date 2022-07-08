@@ -1,10 +1,10 @@
 Product             |Mass (g)  |Price (EUR)
-egg                 |300       |0,25 €    
-salt                |10        |0,01 €    
 beetroot            |300       |0,25 €    
 cabbage             |600       |0,58 €    
 carrot              |200       |0,11 €    
 onion               |200       |0,10 €    
 meat                |500       |1,94 €    
+egg                 |300       |0,25 €    
+salt                |10        |0,01 €    
 cucumber            |200       |0,25 €    
 oil                 |30        |0,03 €    
