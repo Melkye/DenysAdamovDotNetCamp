@@ -8,20 +8,19 @@ namespace Assignment9
 {
     internal class Menu
     {
-        private List<Dish> _dishes = new List<Dish>(); // use set to have unique dishes
-        public Menu(List<Dish> dishes)
+        private SortedSet<Dish> _dishes;
+        public Menu(SortedSet<Dish> dishes)
         {
             _dishes = new(dishes);
         }
         public Menu(Menu copyMenu)
         {
-           _dishes = new(copyMenu._dishes); // create own copy?
+           _dishes = new(copyMenu._dishes);
         }
-
         // copying and returning the whole collection seems too heavy, how to avoid this?
         // suppose using Iterator pattern
-        public List<Dish> Dishes => new (_dishes);
+        public SortedSet<Dish> Dishes => new (_dishes);
         // when return List<> and when return IEnumerable<>?
-        // public IEnumerable<Dish> Dishes => new List<Dish>(_dishes);
+        // public IEnumerable<Dish> Dishes => new SortedSet<Dish>(_dishes);
     }
 }

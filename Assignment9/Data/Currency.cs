@@ -1,6 +1,6 @@
 ﻿namespace Assignment9
 {
-    internal enum Currency // but I need to fetch currency and rate from file
+    internal enum Currency
     {
         EUR,
         UAH,

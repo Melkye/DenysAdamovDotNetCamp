@@ -2,11 +2,7 @@
 {
     internal class Dish
     {
-        private Dictionary<string, double> _ingredients; // title and mass in g
-        //public Dish()
-        //{
-        //    _ingredients = new();
-        //}
+        private Dictionary<string, double> _ingredients; // title and mass in grams
         public Dish(string title, Dictionary<string, double> ingredients)
         {
             Title = title;

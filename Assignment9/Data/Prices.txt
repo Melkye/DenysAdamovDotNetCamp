@@ -8,3 +8,4 @@ egg 30
 milk 30
 salt 20
 oil 33
+meat 140

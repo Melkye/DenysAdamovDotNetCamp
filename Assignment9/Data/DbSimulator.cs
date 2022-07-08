@@ -5,7 +5,7 @@ namespace Assignment9
     /// <summary>
     /// Works as a simulation of db connection
     /// </summary>
-    internal class DbSimulator // maybe add properties to replace files
+    internal class DbSimulator
     {
         private string _pricesFile;
         private string _menuFile;
@@ -40,9 +40,9 @@ namespace Assignment9
         }
         public Dictionary<string, double> ReadPricesFromFile()
         {
-            using (StreamReader file = new(_pricesFile)) // handle exceptions
+            using (StreamReader file = new(_pricesFile))
             {
-                Dictionary<string, double> products = new Dictionary<string, double>();
+                Dictionary<string, double> products = new();
                 while (!file.EndOfStream)
                 {
                     string? line = file.ReadLine();
@@ -54,14 +54,14 @@ namespace Assignment9
                         products[title] = price;
                     }
                 }
-                return products; // maybe better return after the using block?
+                return products;
             }
         }
-        public List<Dish> ReadMenuFromFile()
+        public SortedSet<Dish> ReadMenuFromFile()
         {
             using (StreamReader file = new(_menuFile))
             {
-                List<Dish> dishes = new();
+                SortedSet<Dish> dishes = new();
                 while (!file.EndOfStream)
                 {
                     dishes.Add(ReadDishFromFile(file));
@@ -90,7 +90,7 @@ namespace Assignment9
             }
             return new Dish(dishTitle, ingredients);
         }
-        public Dictionary<Currency, double> ReadExchangeRatesFromFile() // add exception handling
+        public Dictionary<Currency, double> ReadExchangeRatesFromFile()
         {
             Dictionary<Currency, double> exchangeRates = new();
             using (StreamReader file = new(_exchangeRatesFile))
@@ -109,10 +109,10 @@ namespace Assignment9
         {
             using (StreamWriter file = new(_pricesFile, append: true))
             {
-                file.WriteLine(product.Key + " " + product.Value.ToString());
+                file.Write("\r\n" + product.Key + " " + product.Value.ToString());
             }
         }
-        public void SaveMenuIngredientsMassAndCostToFile(Dictionary<string, (double mass, double price)> menuIngredientsInfo, Currency currency = Currency.UAH)
+        public void SaveMenuIngredientsMassAndPriceToFile(Dictionary<string, (double mass, double price)> menuIngredientsInfo, Currency currency = Currency.UAH)
         {
             switch (currency)
             {
@@ -132,7 +132,7 @@ namespace Assignment9
             using (StreamWriter file = new(_needsFile))
             {
                 string header = $"{"Product",-FormatSettings.TITLE_PRINT_WIDTH}|" +
-                        $"{"Mass {g)",-FormatSettings.MASS_PRINT_WIDTH}|" +
+                        $"{"Mass (g)",-FormatSettings.MASS_PRINT_WIDTH}|" +
                         $"{$"Price ({currency})",-FormatSettings.PRICE_PRINT_WIDTH}";
                 file.WriteLine(header);
                 int titlePrintWidth = menuIngredientsInfo.Max(i => i.Key.Length);
