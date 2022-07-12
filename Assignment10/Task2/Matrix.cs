@@ -7,29 +7,29 @@ using System.Threading.Tasks;
 
 namespace Task2
 {
-    internal class Matrix : IEnumerable
+    internal class Matrix : IEnumerable<int>
     {
         public int[,] _elements;
         public Matrix(int rows, int columns)
         {
             _elements = new int[rows, columns];
         }
-        public int[,] Elements
-        {
-            get
-            {
-                int[,] copyElements = new int[Rows, Columns];
-                for (int i = 0; i < Rows; i++)
-                {
-                    for (int j = 0; j < Columns; j++)
-                    {
-                        copyElements[i, j] = _elements[i, j];
-                    }
-                }
-                return copyElements;
-            }
-            private set => _elements = value;
-        }
+        //public int[,] Elements
+        //{
+        //    get
+        //    {
+        //        int[,] copyElements = new int[Rows, Columns];
+        //        for (int i = 0; i < Rows; i++)
+        //        {
+        //            for (int j = 0; j < Columns; j++)
+        //            {
+        //                copyElements[i, j] = _elements[i, j];
+        //            }
+        //        }
+        //        return copyElements;
+        //    }
+        //    private set => _elements = value;
+        //}
 
         public int Rows => _elements.GetLength(0);
         public int Columns => _elements.GetLength(1);
@@ -100,14 +100,12 @@ namespace Task2
 
         public void FillDiagonalSnake(int[] numbers)
         {
-            int numbersIndex = 0;
             int i = 0;
             int j = 0;
             DiagonalSnakeMove prevMove = DiagonalSnakeMove.UpRight;
-            for (int k = 0; k < Rows*Columns; k++)
+            for (int k = 0; k < Rows * Columns; k++)
             {
-                _elements[i, j] = numbers[numbersIndex];
-                numbersIndex++;
+                _elements[i, j] = numbers[k];
                 MoveDiagonalSnake(ref i, ref j, ref prevMove);
             }
         }
@@ -159,7 +157,7 @@ namespace Task2
                 {
                     i++;
                     prevMove = DiagonalSnakeMove.Down;
-                } 
+                }
                 else
                 {
                     i++;
@@ -181,7 +179,7 @@ namespace Task2
                     j--;
                     prevMove = DiagonalSnakeMove.DownLeft;
                 }
-            } 
+            }
         }
 
         // 1 10  9  8
@@ -198,18 +196,16 @@ namespace Task2
         // up       up-right corner     left
         // left     -                   left
         // left     i=lap, j=lap+1      down, lap++
-  
+
         public void FillSpiralSnakeClockwise(int[] numbers)
         {
-            int numbersIndex = 0;
             int i = 0;
             int j = 0;
             int lap = 0;
             SpiralSnakeMove prevMove = SpiralSnakeMove.Down;
             for (int k = 0; k < Rows * Columns; k++)
             {
-                _elements[i, j] = numbers[numbersIndex];
-                numbersIndex++;
+                _elements[i, j] = numbers[k];
                 MoveSpiralSnakeClockwise(ref i, ref j, ref prevMove, ref lap);
             }
         }
@@ -276,27 +272,26 @@ namespace Task2
             {
                 for (int j = 0; j < Columns; j++)
                 {
-                    s += ($"{Elements[i, j], 2} ");
+                    s += ($"{_elements[i, j],2} ");
                 }
                 s += "\n";
             }
             return s;
         }
-
-        public IEnumerator GetEnumerator()
+        // diaginal snake
+        public IEnumerator<int> GetEnumerator()
         {
             int i = 0;
             int j = 0;
-            int lap = 0;
-            SpiralSnakeMove prevMove = SpiralSnakeMove.Down;
+            DiagonalSnakeMove prevMove = DiagonalSnakeMove.UpRight;
             for (int k = 0; k < Rows * Columns; k++)
             {
                 yield return _elements[i, j];
-                MoveSpiralSnakeClockwise(ref i, ref j, ref prevMove, ref lap);
+                MoveDiagonalSnake(ref i, ref j, ref prevMove);
             }
         }
         // horizontal snake
-        //public IEnumerator GetEnumerator() 
+        //public IEnumerator<int> GetEnumerator() 
         //{
         //    for (int i = 0; i < Rows;i++)
         //    {
@@ -313,5 +308,9 @@ namespace Task2
         //        }
         //    }
         //}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
