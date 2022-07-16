@@ -6,9 +6,9 @@ namespace Task1.Presentation
 {
     internal class View 
     {
-        private readonly StorageService _storageService; // IStorageService?
+        private readonly ProductStorageService _storageService; // IStorageService?
 
-        public View(StorageService storageService)
+        public View(ProductStorageService storageService)
         {
             _storageService = storageService;
         }

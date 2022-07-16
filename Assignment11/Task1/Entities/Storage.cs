@@ -3,17 +3,33 @@ using Task1.Interfaces;
 
 namespace Task1.Entities
 {
-    internal class Storage : IStorage //, IEnumerable<Product>
+    internal class Storage<T> : IStorage<T> where T : class, IGood //, IEnumerable<Product>
     {
+        // TODO IDisposable ? for Enumerator?
         #region Fields
-        private List<Product> _items; // where IGood
+        private List<T> _items; // where IGood
         #endregion Fields
         #region Constructors
         public Storage() : this(default)
         { }
-        public Storage(IEnumerable<Product> items)
+        public Storage(IEnumerable<T> items)
         {
             Fill(items);
+
+            //if (items is null)
+            //{
+            //    throw new ArgumentNullException(nameof(items), "Can't fill with emptiness");
+            //}
+            //else
+            //{
+            //    // further text may be wrong
+
+            //    // this copies Product instances' references to _items
+            //    // suppose need to create new instances
+            //    // but their real type can be not base but inherited
+            //    // so declaring a new instance of type Product is not correct
+            //    _items = new(items);
+            //}
         }
         #endregion Constructors
         #region Properties
@@ -21,7 +37,8 @@ namespace Task1.Entities
         public double TotalPrice => _items.Sum(p => p.Price);
         #endregion Properties
         #region Indexers
-        public IGood this[int index]
+        // TODO: return T or IGood?
+        public T this[int index]
         {
             // returning an internal object and using base reference
             // due to unability to determine its
@@ -35,13 +52,14 @@ namespace Task1.Entities
                 }
                 else
                 {
-                    _items[index] = (Product)value;
+                    _items[index] = value;
                 }
             }
         }
         #endregion Indexers
         #region Methods
-        public void Fill(IEnumerable<IGood> items)
+        // TODO: remove Fill and move validation logic to constructor
+        public void Fill(IEnumerable<T> items)
         {
             if (items is null)
             {
@@ -55,7 +73,7 @@ namespace Task1.Entities
                 // suppose need to create new instances
                 // but their real type can be not base but inherited
                 // so declaring a new instance of type Product is not correct
-                _items = new(items.Cast<Product>());
+                _items = new(items);
             }
         }
         // how to hande exceptions and document which ones methods throws when working through interface?
@@ -84,46 +102,47 @@ namespace Task1.Entities
                 item.IncreasePrice(percent);
             }
         }
-        public IStorage GetExcept(IStorage other)
+        public IEnumerable<T> Except(IEnumerable<T> other) // IEnumerable<T>?
         {
-            return new Storage(_items.Except((other as Storage)._items)); // what if not Storage?
+            return new Storage<T>(_items.Except((other as Storage<T>)._items)); // what if not Storage?
         }
-        public IStorage GetIntersect(IStorage other)
+        public IEnumerable<T> Intersect(IEnumerable<T> other)
         {
-            return new Storage(_items.Intersect((other as Storage)._items));
+            return new Storage<T>(_items.Intersect((other as Storage<T>)._items));
         }
-        public IStorage GetUnion(IStorage other)
+        public IEnumerable<T> Union(IEnumerable<T> other)
         {
-            return new Storage(_items.Union((other as Storage)._items));
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            return ((IEnumerable)_items).GetEnumerator();
+            return new Storage<T>(_items.Union((other as Storage<T>)._items));
         }
 
-        //public IEnumerator<Product> GetEnumerator()
-        //{
-        //    return ((IEnumerable<Product>)_items).GetEnumerator();
-        //}
-
-        //IEnumerator IEnumerable.GetEnumerator()
+        //IEnumerator IEnumerable<T>.GetEnumerator()
         //{
         //    return ((IEnumerable)_items).GetEnumerator();
         //}
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return ((IEnumerable<T>)_items).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)_items).GetEnumerator();
+        }
         #endregion Methods
         #region Operator Overloads
-        public static Storage operator /(Storage left, Storage right)
+        // TODO: Storage<T> or IEnumerable<T>?
+        public static Storage<T> operator /(Storage<T> left, Storage<T> right)
         {
-            return (Storage)left.GetExcept(right); // remove cast
+            return (Storage<T>)left.Except(right);
         }
-        public static Storage operator *(Storage left, Storage right)
+        public static Storage<T> operator *(Storage<T> left, Storage<T> right)
         {
-            return (Storage)left.GetIntersect(right);
+            return (Storage<T>)left.Intersect(right);
         }
-        public static Storage operator +(Storage left, Storage right)
+        public static Storage<T> operator +(Storage<T> left, Storage<T> right)
         {
-            return (Storage)right.GetUnion(left);
+            return (Storage<T>)right.Union(left);
         }
         #endregion
     }

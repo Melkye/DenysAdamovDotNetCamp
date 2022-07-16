@@ -1,7 +1,7 @@
 ﻿
 namespace Assignment7
 {
-    public class Product
+    public class Product : IComparable
     {
         protected double _price;
         protected double _weight;
@@ -58,6 +58,12 @@ namespace Assignment7
             }
 
         }
+
+        public int CompareTo(object? obj)
+        {
+            return (obj as Product)?.Title.CompareTo(Title) ?? -1;
+        }
+
         public override string ToString()
         {
             return $"{Title,-10}|{Price,-10:C2}|{Weight,-10}|";

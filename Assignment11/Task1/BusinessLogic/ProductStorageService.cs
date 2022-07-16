@@ -5,18 +5,21 @@ using Task1.Enums;
 
 namespace Task1.BusinessLogic
 {
-    internal class StorageService : IEnumerable//IEnumerable<Product>
+    // TODO: make generic but reading is problematic
+    internal class ProductStorageService : IEnumerable//IEnumerable<Product>
     {
         private readonly ILogger _logger;
-        private readonly IStorage _storage; // IStorage?
+        private readonly IStorage<Product> _storage; // IStorage?
         private readonly string _sourceFilePath;
         private readonly string _destinationFilePath;
-        public StorageService(IStorage storage, ILogger logger, string sourceFilePath, string destinationFilePath)
+        public ProductStorageService(IStorage<Product> storage, ILogger logger, string sourceFilePath, string destinationFilePath)
         {
             _storage = storage;
             _logger = logger;
             _sourceFilePath = sourceFilePath;
             _destinationFilePath = destinationFilePath;
+            // TODO: refactor storage filling
+            FillStorageFromFile();
         }
         public double TotalWeight => _storage.TotalMass;
         public double TotalPrice => _storage.TotalPrice;
@@ -44,17 +47,17 @@ namespace Task1.BusinessLogic
                 throw;
             }
         }
-        public IStorage GetExcept(IStorage storage)
+        public IEnumerable<Product> GetExcept(IEnumerable<Product> storage)
         {
-            return _storage.GetExcept(storage);
+            return _storage.Except(storage);
         }
-        public IStorage GetIntersect(IStorage storage)
+        public IEnumerable<Product> GetIntersect(IEnumerable<Product> storage)
         {
-            return _storage.GetIntersect(storage);
+            return _storage.Intersect(storage);
         }
-        public IStorage GetUnion(IStorage storage)
+        public IEnumerable<Product> GetUnion(IEnumerable<Product> storage)
         {
-            return _storage.GetUnion(storage);
+            return _storage.Union(storage);
         }
         public void FillStorageFromFile()
         {

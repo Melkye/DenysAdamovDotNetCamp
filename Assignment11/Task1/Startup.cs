@@ -22,11 +22,11 @@ namespace Task1
                     new DairyProduct("product 5 - dairy product", 5.5, 5.5, 5),
                     new DairyProduct("product 6 - dairy product", 6.6, 6.6, 6)
                 };
-                Storage storage1 = new(products);
+                Storage<Product> storage1 = new(products);
                 Logger logger = new("../../../Data/Logs.txt");
                 string storageSource = "../../../Data/StorageSource.txt";
                 string storageDestination = "../../../Data/StorageDestination.txt";
-                StorageService storageService = new(storage1, logger, storageSource, storageDestination);
+                ProductStorageService storageService = new(storage1, logger, storageSource, storageDestination);
 
                 View view = new(storageService);
 
@@ -36,10 +36,10 @@ namespace Task1
 
                 view.PrintDetails();
 
-                Storage storage2 = new(products[..3]);
+                Storage<Product> storage2 = new(products[..3]);
 
-                IStorage whaaat1 = storage1 / storage2;
-                IStorage whaaat2 = storage1.GetExcept(storage2);
+                IStorage<Product> whaaat1 = storage1 / storage2;
+                IStorage<Product> whaaat2 = (IStorage<Product>)storage1.Except(storage2);
 
             }
             catch (ArgumentException ex) // change exception type
