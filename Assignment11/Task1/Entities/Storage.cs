@@ -1,11 +1,12 @@
 ﻿using System.Collections;
+using Task1.Interfaces;
 
 namespace Task1.Entities
 {
-    internal class Storage : IEnumerable<Product>
+    internal class Storage : IStorage //, IEnumerable<Product>
     {
         #region Fields
-        private List<Product> _items;
+        private List<Product> _items; // where IGood
         #endregion Fields
         #region Constructors
         public Storage() : this(default)
@@ -16,14 +17,14 @@ namespace Task1.Entities
         }
         #endregion Constructors
         #region Properties
-        public double TotalWeight => _items.Sum(p => p.Weight);
+        public double TotalMass => _items.Sum(p => p.Mass);
         public double TotalPrice => _items.Sum(p => p.Price);
         #endregion Properties
         #region Indexers
-        public Product this[int index]
+        public IGood this[int index]
         {
             // returning an internal object and using base reference
-            // due to disability to determine its
+            // due to unability to determine its
             // real type and create a deep copy
             get => _items[index];
             set
@@ -34,13 +35,13 @@ namespace Task1.Entities
                 }
                 else
                 {
-                    _items[index] = value;
+                    _items[index] = (Product)value;
                 }
             }
         }
         #endregion Indexers
         #region Methods
-        public void Fill(IEnumerable<Product> items)
+        public void Fill(IEnumerable<IGood> items)
         {
             if (items is null)
             {
@@ -48,32 +49,15 @@ namespace Task1.Entities
             }
             else
             {
+                // further text may be wrong
+
                 // this copies Product instances' references to _items
                 // suppose need to create new instances
                 // but their real type can be not base but inherited
                 // so declaring a new instance of type Product is not correct
-                _items = new(items);
+                _items = new(items.Cast<Product>());
             }
         }
-        //public List<Meat> GetMeatProducts()
-        //{
-        //    List<Meat> meatProducts = new();
-        //    foreach (Product product in _products)
-        //    {
-        //        if (product is Meat)
-        //        {
-        //            meatProducts.Add(product as Meat);
-        //        }
-        //    }
-        //    return meatProducts;
-        //}
-        //public void ChangePrice(double changePercent)
-        //{
-        //    foreach (var product in Products)
-        //    {
-        //        product.ChangePrice(changePercent);
-        //    }
-        //}
         // how to hande exceptions and document which ones methods throws when working through interface?
         /// <summary>
         /// Decreases prices for each item
@@ -100,29 +84,46 @@ namespace Task1.Entities
                 item.IncreasePrice(percent);
             }
         }
-
-        public IEnumerator<Product> GetEnumerator()
+        public IStorage GetExcept(IStorage other)
         {
-            return ((IEnumerable<Product>)_items).GetEnumerator();
+            return new Storage(_items.Except((other as Storage)._items)); // what if not Storage?
+        }
+        public IStorage GetIntersect(IStorage other)
+        {
+            return new Storage(_items.Intersect((other as Storage)._items));
+        }
+        public IStorage GetUnion(IStorage other)
+        {
+            return new Storage(_items.Union((other as Storage)._items));
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public IEnumerator GetEnumerator()
         {
             return ((IEnumerable)_items).GetEnumerator();
         }
+
+        //public IEnumerator<Product> GetEnumerator()
+        //{
+        //    return ((IEnumerable<Product>)_items).GetEnumerator();
+        //}
+
+        //IEnumerator IEnumerable.GetEnumerator()
+        //{
+        //    return ((IEnumerable)_items).GetEnumerator();
+        //}
         #endregion Methods
         #region Operator Overloads
         public static Storage operator /(Storage left, Storage right)
         {
-            return new Storage(left._items.Except(right._items));
+            return (Storage)left.GetExcept(right); // remove cast
         }
         public static Storage operator *(Storage left, Storage right)
         {
-            return new Storage(left._items.Intersect(right._items));
+            return (Storage)left.GetIntersect(right);
         }
         public static Storage operator +(Storage left, Storage right)
         {
-            return new Storage(left._items.Union(right._items));
+            return (Storage)right.GetUnion(left);
         }
         #endregion
     }

@@ -1,33 +1,38 @@
-﻿namespace Task1.Entities
+﻿using System.Collections;
+
+namespace Task1.Entities
 {
-    //TODO: change similar to Storage
-    public class Buy 
+    public class Buy : IEnumerable<Product>
     {
-        private List<Product> _products;
+        private List<Product> _items;
         public Buy() :this(default)
         { }
-        public Buy(List<Product> products)
+        public Buy(IEnumerable<Product> products)
         { 
             Fill(products);
         }
-        public List<Product> Products
+        public double TotalWeight => _items.Sum(p => p.Mass);
+        public double TotalPrice => _items.Sum(p => p.Price);
+        public void Fill(IEnumerable<Product> items)
         {
-            private set => Fill(value);
-            get => new(_products);
-        }
-        public void Fill(List<Product> products)
-        {
-            if (products is not null)
+            if (items is null)
             {
-                _products = new List<Product>(products);
+                throw new ArgumentNullException(nameof(items), "Can't fill with emptiness");
             }
             else
             {
-                throw new ArgumentNullException(nameof(products), "Can't fill with emptiness");
+                _items = new(items);
             }
         }
-        public double TotalWeight => _products.Sum(p => p.Weight);
-        public double TotalPrice => _products.Sum(p => p.Price);
 
+        public IEnumerator<Product> GetEnumerator()
+        {
+            return ((IEnumerable<Product>)_items).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)_items).GetEnumerator();
+        }
     }
 }

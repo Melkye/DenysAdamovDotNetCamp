@@ -2,6 +2,7 @@
 using Task1.BusinessLogic;
 using Task1.Entities;
 using Task1.Enums;
+using Task1.Interfaces;
 using Task1.Presentation;
 
 namespace Task1
@@ -29,15 +30,19 @@ namespace Task1
 
                 View view = new(storageService);
 
-                view.FillFromFile();
+                //view.FillFromFile();
 
-                view.SaveToFile();
+                //view.SaveToFile();
 
                 view.PrintDetails();
 
+                Storage storage2 = new(products[..3]);
+
+                IStorage whaaat1 = storage1 / storage2;
+                IStorage whaaat2 = storage1.GetExcept(storage2);
 
             }
-            catch (Exception ex)
+            catch (ArgumentException ex) // change exception type
             {
                 Console.WriteLine(ex.Message);
             }

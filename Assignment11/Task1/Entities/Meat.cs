@@ -63,7 +63,7 @@ namespace Task1.Entities
             {
                 if (Title == comparedMeat.Title
                     && Math.Abs(Price - comparedMeat.Price) < 0.000001
-                    && Math.Abs(Weight - comparedMeat.Weight) < 0.000001
+                    && Math.Abs(Mass - comparedMeat.Mass) < 0.000001
                     && _category == comparedMeat._category
                     && _type == comparedMeat._type)
                 {

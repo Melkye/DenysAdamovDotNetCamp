@@ -6,16 +6,16 @@ namespace Task1.Entities
     {
         protected string _title;
         protected double _price;
-        protected double _weight;
+        protected double _mass;
         protected Product() : this(default, default, default)
         { }
-        protected Product(Product copyProduct) : this(copyProduct.Title, copyProduct.Price, copyProduct.Weight)
+        protected Product(Product copyProduct) : this(copyProduct.Title, copyProduct.Price, copyProduct.Mass)
         { }
-        protected Product(string title, double price, double weight)
+        protected Product(string title, double price, double mass)
         {
             Title = title;
             Price = price;
-            Weight = weight;
+            Mass = mass;
         }
         /// <summary>
         /// The product's title
@@ -55,9 +55,9 @@ namespace Task1.Entities
                 }
             }
         }
-        public double Weight
+        public double Mass
         {
-            get => _weight;
+            get => _mass;
             protected set
             {
                 if (value <= 0)
@@ -66,7 +66,7 @@ namespace Task1.Entities
                 }
                 else
                 {
-                    _weight = value;
+                    _mass = value;
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Task1.Entities
         }
         public override string ToString() // change constants
         {
-            return $"{Title,-10}|{Price,-10:C2}|{Weight,-10}|";
+            return $"{Title,-10}|{Price,-10:C2}|{Mass,-10}|";
         }
     }
 }

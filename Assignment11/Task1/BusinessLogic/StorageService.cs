@@ -5,20 +5,20 @@ using Task1.Enums;
 
 namespace Task1.BusinessLogic
 {
-    internal class StorageService : IEnumerable<Product>
+    internal class StorageService : IEnumerable//IEnumerable<Product>
     {
         private readonly ILogger _logger;
-        private readonly Storage _storage; // IStorage?
+        private readonly IStorage _storage; // IStorage?
         private readonly string _sourceFilePath;
         private readonly string _destinationFilePath;
-        public StorageService(Storage storage, ILogger logger, string sourceFilePath, string destinationFilePath)
+        public StorageService(IStorage storage, ILogger logger, string sourceFilePath, string destinationFilePath)
         {
             _storage = storage;
             _logger = logger;
             _sourceFilePath = sourceFilePath;
             _destinationFilePath = destinationFilePath;
         }
-        public double TotalWeight => _storage.TotalWeight;
+        public double TotalWeight => _storage.TotalMass;
         public double TotalPrice => _storage.TotalPrice;
         public void DecreasePrice(double percent)
         {
@@ -44,17 +44,17 @@ namespace Task1.BusinessLogic
                 throw;
             }
         }
-        public Storage GetExcept(Storage storage)
+        public IStorage GetExcept(IStorage storage)
         {
-            return _storage / storage;
+            return _storage.GetExcept(storage);
         }
-        public Storage GetIntersect(Storage storage)
+        public IStorage GetIntersect(IStorage storage)
         {
-            return _storage * storage;
+            return _storage.GetIntersect(storage);
         }
-        public Storage GetUnion(Storage storage)
+        public IStorage GetUnion(IStorage storage)
         {
-            return _storage + storage;
+            return _storage.GetUnion(storage);
         }
         public void FillStorageFromFile()
         {
@@ -149,14 +149,14 @@ namespace Task1.BusinessLogic
                 sw.WriteLine(product);
             }
         }
-        public IEnumerator<Product> GetEnumerator()
-        {
-            return ((IEnumerable<Product>)_storage).GetEnumerator();
-        }
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)_storage).GetEnumerator();
-        }
+        //public IEnumerator<Product> GetEnumerator()
+        //{
+        //    return ((IEnumerable<Product>)_storage).GetEnumerator();
+        //}
+        //IEnumerator IEnumerable.GetEnumerator()
+        //{
+        //    return ((IEnumerable)_storage).GetEnumerator();
+        //}
 
         public IEnumerable<(DateTime, string)> GetLogEntries()
         {
@@ -177,6 +177,11 @@ namespace Task1.BusinessLogic
         public void UpdateLogEntry(string message, DateTime dateTime)
         {
             _logger.UpdateEntry(message, dateTime);
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return _storage.GetEnumerator();
         }
     }
 }

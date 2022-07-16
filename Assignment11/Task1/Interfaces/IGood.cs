@@ -10,7 +10,7 @@ namespace Task1.Interfaces
     {
         string Title { get; }
         double Price { get; }
-        double Weight { get; }
+        double Mass { get; }
         void DecreasePrice(double percent);
         /// <summary>
         /// blab

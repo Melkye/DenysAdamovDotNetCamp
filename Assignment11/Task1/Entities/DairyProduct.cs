@@ -61,7 +61,7 @@
             {
                 if (Title == comparedDp.Title
                     && Math.Abs(Price - comparedDp.Price) < 0.000001
-                    && Math.Abs(Weight - comparedDp.Weight) < 0.000001
+                    && Math.Abs(Mass - comparedDp.Mass) < 0.000001
                     && _daysBeforeSpoil == comparedDp._daysBeforeSpoil)
                 {
                     return true;
