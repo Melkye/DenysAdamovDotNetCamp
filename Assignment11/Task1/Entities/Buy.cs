@@ -1,6 +1,7 @@
-﻿namespace Task1
+﻿namespace Task1.Entities
 {
-    public class Buy
+    //TODO: change similar to Storage
+    public class Buy 
     {
         private List<Product> _products;
         public Buy() :this(default)
@@ -12,7 +13,7 @@
         public List<Product> Products
         {
             private set => Fill(value);
-            get => new List<Product>(_products);
+            get => new(_products);
         }
         public void Fill(List<Product> products)
         {

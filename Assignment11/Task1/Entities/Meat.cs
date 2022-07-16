@@ -1,5 +1,6 @@
-﻿
-namespace Task1
+﻿using Task1.Enums;
+
+namespace Task1.Entities
 {
     public class Meat : Product
     {
@@ -56,32 +57,31 @@ namespace Task1
         {
             return base.ToString() + $"{ Category, -30}|{Type, -10}|";
         }
-        //public override bool Equals(object? obj)
-        //{
-        //    if (obj is Meat)
-        //    {
-        //        Meat comparedMeat = (Meat)obj;
-        //        if (this.Title == comparedMeat.Title
-        //            && Math.Abs(this.Price - comparedMeat.Price) < 0.000001
-        //            && Math.Abs(this.Weight - comparedMeat.Weight) < 0.000001
-        //            && this._category == comparedMeat._category
-        //            && this._type == comparedMeat._type)
-        //        {
-        //            return true;
-        //        }
-        //        else
-        //        {
-        //           return false;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-        //public override int GetHashCode()
-        //{
-        //    return base.GetHashCode();
-        //}
+        public override bool Equals(object? obj)
+        {
+            if (obj is Meat comparedMeat)
+            {
+                if (Title == comparedMeat.Title
+                    && Math.Abs(Price - comparedMeat.Price) < 0.000001
+                    && Math.Abs(Weight - comparedMeat.Weight) < 0.000001
+                    && _category == comparedMeat._category
+                    && _type == comparedMeat._type)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

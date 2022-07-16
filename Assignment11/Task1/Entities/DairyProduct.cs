@@ -1,4 +1,4 @@
-﻿namespace Task1
+﻿namespace Task1.Entities
 {
     public class DairyProduct : Product
     {
@@ -55,31 +55,30 @@
         {
             return base.ToString() + $"{ DaysBeforeSpoil, -30}";
         }
-        //public override bool Equals(object? obj)
-        //{
-        //    if (obj is DairyProduct)
-        //    {
-        //        DairyProduct comparedDp = (DairyProduct)obj;
-        //        if (this.Title == comparedDp.Title
-        //            && Math.Abs(this.Price - comparedDp.Price) < 0.000001
-        //            && Math.Abs(this.Weight - comparedDp.Weight) < 0.000001
-        //            && this._daysBeforeSpoil == comparedDp._daysBeforeSpoil)
-        //        {
-        //            return true;
-        //        }
-        //        else
-        //        {
-        //            return false;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-        //public override int GetHashCode()
-        //{
-        //    return base.GetHashCode();
-        //}
+        public override bool Equals(object? obj)
+        {
+            if (obj is DairyProduct comparedDp)
+            {
+                if (Title == comparedDp.Title
+                    && Math.Abs(Price - comparedDp.Price) < 0.000001
+                    && Math.Abs(Weight - comparedDp.Weight) < 0.000001
+                    && _daysBeforeSpoil == comparedDp._daysBeforeSpoil)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

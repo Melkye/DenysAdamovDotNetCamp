@@ -1,5 +1,6 @@
-﻿
-namespace Task1
+﻿using Task1.Interfaces;
+
+namespace Task1.Entities
 {
     public class Check : IViewerBuy
     {

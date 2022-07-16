@@ -1,18 +1,17 @@
-﻿
-using Task1.Interfaces;
+﻿using Task1.Interfaces;
 
-namespace Task1
+namespace Task1.Entities
 {
-    public class Product : IGood
+    public abstract class Product : IGood // keep abstract?
     {
         protected string _title;
         protected double _price;
         protected double _weight;
-        public Product() : this(default, default, default)
+        protected Product() : this(default, default, default)
         { }
-        public Product(Product copyProduct) : this(copyProduct.Title, copyProduct.Price, copyProduct.Weight)
+        protected Product(Product copyProduct) : this(copyProduct.Title, copyProduct.Price, copyProduct.Weight)
         { }
-        public Product(string title, double price, double weight)
+        protected Product(string title, double price, double weight)
         {
             Title = title;
             Price = price;
@@ -71,19 +70,6 @@ namespace Task1
                 }
             }
         }
-        //public virtual void ChangePrice(double changePercent)
-        //{
-        //    if (changePercent > -100)
-        //    {
-        //        Price += Price * changePercent / 100;
-        //    }
-        //    else
-        //    {
-        //        throw new ArgumentOutOfRangeException(nameof(changePercent), "Sale can't be less than 100%");
-        //    }
-
-        //}
-
         /// <summary>
         /// Decreases price by specified percent
         /// </summary>
@@ -95,9 +81,13 @@ namespace Task1
             {
                 throw new ArgumentException("Decrease percent can't be negative");
             }
+            else if (percent >= 100)
+            {
+                throw new ArgumentException("Decrease percent can't be 100 or higher");
+            }
             else
             {
-                Price *= (100 + percent) / 100;
+                Price *= (100 - percent) / 100;
             }
         }
         /// <summary>
@@ -113,14 +103,13 @@ namespace Task1
             }
             else
             {
-                Price *= (100 + percent)/100;
+                Price *= (100 + percent) / 100;
             }
         }
         public int CompareTo(object? obj)
         {
             return (obj as Product)?.Title.CompareTo(Title) ?? -1;
         }
-
         public override string ToString() // change constants
         {
             return $"{Title,-10}|{Price,-10:C2}|{Weight,-10}|";

@@ -1,9 +1,8 @@
-﻿
-using Task1.Interfaces;
+﻿using System.Collections;
 
-namespace Task1
+namespace Task1.Entities
 {
-    internal class Storage
+    internal class Storage : IEnumerable<Product>
     {
         #region Fields
         private List<Product> _items;
@@ -17,19 +16,16 @@ namespace Task1
         }
         #endregion Constructors
         #region Properties
-        // TODO Replace with IEnumerable implementation
-        public List<Product> Products
-        {
-            private set => Fill(value);
-            get => new(_items);
-        }
         public double TotalWeight => _items.Sum(p => p.Weight);
         public double TotalPrice => _items.Sum(p => p.Price);
         #endregion Properties
         #region Indexers
         public Product this[int index]
         {
-            get => new(_items[index]);
+            // returning an internal object and using base reference
+            // due to disability to determine its
+            // real type and create a deep copy
+            get => _items[index];
             set
             {
                 if (value is null)
@@ -78,6 +74,12 @@ namespace Task1
         //        product.ChangePrice(changePercent);
         //    }
         //}
+        // how to hande exceptions and document which ones methods throws when working through interface?
+        /// <summary>
+        /// Decreases prices for each item
+        /// </summary>
+        /// <param name="percent"></param>
+        /// <exception cref="ArgumentException">Thrown internally when <paramref name="percent"/> less than 0</exception>
         public void DecreasePrice(double percent)
         {
             foreach (var item in _items)
@@ -86,27 +88,41 @@ namespace Task1
             }
         }
         // how to hande exceptions and document which ones methods throws when working through interface?
+        /// <summary>
+        /// Increases prices for each item
+        /// </summary>
+        /// <param name="percent"></param>
+        /// <exception cref="ArgumentException">Thrown internally when <paramref name="percent"/> less than 0</exception>
         public void IncreasePrice(double percent)
         {
             foreach (var item in _items)
             {
-                item.IncreasePrice(percent); // does it work?
-                // catch - reset price back for those that changed
+                item.IncreasePrice(percent);
             }
+        }
+
+        public IEnumerator<Product> GetEnumerator()
+        {
+            return ((IEnumerable<Product>)_items).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)_items).GetEnumerator();
         }
         #endregion Methods
         #region Operator Overloads
         public static Storage operator /(Storage left, Storage right)
         {
-            return new Storage(left.Products.Except(right.Products));
+            return new Storage(left._items.Except(right._items));
         }
         public static Storage operator *(Storage left, Storage right)
         {
-            return new Storage(left.Products.Intersect(right.Products));
+            return new Storage(left._items.Intersect(right._items));
         }
         public static Storage operator +(Storage left, Storage right)
         {
-            return new Storage(left.Products.Union(right.Products));
+            return new Storage(left._items.Union(right._items));
         }
         #endregion
     }

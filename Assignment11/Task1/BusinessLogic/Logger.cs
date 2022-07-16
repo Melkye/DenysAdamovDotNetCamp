@@ -1,43 +1,36 @@
 ﻿using System.Globalization;
+using Task1.Interfaces;
 
-namespace Task1
+namespace Task1.BusinessLogic
 {
-    public class Logger
+    public class Logger : ILogger
     {
-        private string _filename;
+        private readonly string _filename;
         public Logger(string filename)
         {
             _filename = filename;
         }
         public void Log(string message)
         {
-            using (StreamWriter sw = new StreamWriter(_filename, append: true))
-            {
-                sw.WriteLine(message);
-            }
+            using StreamWriter sw = new(_filename, append: true);
+            sw.WriteLine(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + " " + message);
         }
-        public void LogTimed(string message)
+        public IEnumerable<(DateTime, string)> GetEntries()
         {
-            using (StreamWriter sw = new StreamWriter(_filename, append: true))
-            {
-                sw.WriteLine(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + " " + message);
-            }
-        }
-        public List<(DateTime, string)> GetEntries()
-        {
-            List <(DateTime dateTime, string message)> entries = new List<(DateTime, string)>();
-            using (StreamReader sr = new StreamReader(_filename))
+            List <(DateTime dateTime, string message)> entries = new();
+            using (StreamReader sr = new(_filename))
             {
                 while (!sr.EndOfStream)
                 {
-                    string[] entryData = sr.ReadLine().Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                    DateTime dateTime = DateTime.Parse(entryData[0] + " " + entryData[1], CultureInfo.GetCultureInfo("uk-UA").DateTimeFormat);
-                    string message = "";
-                    for (int i = 2; i < entryData.Length; i++)
+                    string? line = sr.ReadLine();
+                    if (!string.IsNullOrEmpty(line))
                     {
-                        message += " " + entryData[i];
+                        int splitIndex = line.IndexOf(' ', line.IndexOf(' ') + 1); // index of the second space: 29.06.2022 19:54:27 Message
+                        string dateTimeString = line[..splitIndex];
+                        DateTime dateTime = DateTime.Parse(dateTimeString, CultureInfo.GetCultureInfo("uk-UA").DateTimeFormat);
+                        string message = line[(splitIndex + 1)..];
+                        entries.Add((dateTime, message));
                     }
-                    entries.Add((dateTime, message));
                 }
             }
             return entries;
@@ -46,23 +39,24 @@ namespace Task1
         /// Returns all entries for the specified date
         /// </summary>
         /// <param name="date"> Wanted logs issue date e.g. DateTime.Now.Date </param>
-        public List<(DateTime, string)> GetEntries(DateTime date)
+        public IEnumerable<(DateTime, string)> GetEntries(DateTime date)
         {
-            List<(DateTime dateTime, string message)> entries = new List<(DateTime, string)>();
-            using (StreamReader sr = new StreamReader(_filename))
+            List<(DateTime dateTime, string message)> entries = new();
+            using (StreamReader sr = new(_filename))
             {
                 while (!sr.EndOfStream)
                 {
-                    string[] entryData = sr.ReadLine().Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                    DateTime dateTime = DateTime.Parse(entryData[0] + " " + entryData[1], CultureInfo.GetCultureInfo("uk-UA").DateTimeFormat);
-                    if (dateTime.Date == date)
+                    string? line = sr.ReadLine();
+                    if (!string.IsNullOrEmpty(line))
                     {
-                        string message = "";
-                        for (int i = 2; i < entryData.Length; i++)
+                        int splitIndex = line.IndexOf(' ', line.IndexOf(' ')); // index of the second space: 29.06.2022 19:54:27 Message
+                        string dateTimeString = line[..splitIndex];
+                        DateTime dateTime = DateTime.Parse(dateTimeString, CultureInfo.GetCultureInfo("uk-UA").DateTimeFormat);
+                        if (dateTime.Date == date)
                         {
-                            message += " " + entryData[i];
+                            string message = line[(splitIndex + 1)..];
+                            entries.Add((dateTime, message));
                         }
-                        entries.Add((dateTime, message));
                     }
                 }
             }
@@ -73,16 +67,14 @@ namespace Task1
         /// </summary>
         /// <param name="newEntries">List of entries to replace the old ones</param>
         /// <exception cref="ArgumentNullException">Thrown when newEntries is null</exception>
-        public void ReplaceEntries(List<(DateTime, string)> newEntries)
+        public void ReplaceEntries(IEnumerable<(DateTime, string)> newEntries)
         {
             if (newEntries is not null)
             {
-                using (StreamWriter sw = new StreamWriter(_filename))
+                using StreamWriter sw = new(_filename);
+                foreach ((DateTime dateTime, string message) in newEntries)
                 {
-                    foreach ((DateTime dateTime, string message) in newEntries)
-                    {
-                        sw.WriteLine(dateTime.ToString("dd.MM.yyyy HH:mm:ss") + " " + message);
-                    }
+                    sw.WriteLine(dateTime.ToString("dd.MM.yyyy HH:mm:ss") + " " + message);
                 }
             }
             else
@@ -96,20 +88,18 @@ namespace Task1
         /// <param name="newEntries">List of entries to replace the old ones</param>
         /// <param name="date">Date to check to replace an entry</param>
         /// <exception cref="ArgumentNullException">Thrown when newEntries is null</exception>
-        public void ReplaceEntries(List<(DateTime, string)> newEntries, DateTime date)
+        public void ReplaceEntries(IEnumerable<(DateTime, string)> newEntries, DateTime date)
         {
             if (newEntries is not null)
             {
-                List<(DateTime dateTime, string message)> entries = GetEntries();
+                List<(DateTime dateTime, string message)> entries = GetEntries().ToList();
                 entries.RemoveAll(e => e.dateTime.Date == date);
                 entries.AddRange(newEntries);
                 entries.Sort();
-                using (StreamWriter sw = new StreamWriter(_filename))
+                using StreamWriter sw = new(_filename);
+                foreach ((DateTime dateTime, string message) in entries)
                 {
-                    foreach ((DateTime dateTime, string message) in entries)
-                    {
-                        sw.WriteLine(dateTime.ToString("dd.MM.yyyy HH:mm:ss") + " " + message);
-                    }
+                    sw.WriteLine(dateTime.ToString("dd.MM.yyyy HH:mm:ss") + " " + message);
                 }
             }
             else
@@ -123,20 +113,19 @@ namespace Task1
         /// <param name="updatedMessage">The new message for the entry</param>
         /// <param name="dateTime">The timestamp whick identifies the entry</param>
         /// <exception cref="ArgumentException">Thrown when no entry is found with the specified timestamp</exception>
-        public void UpdateEntry(string updatedMessage, DateTime dateTime)
+        public void UpdateEntry(string message, DateTime dateTime)
         {
-            List<(DateTime dateTime, string message)> entries = GetEntries();
-            var a = default((DateTime, string));
+            List<(DateTime dateTime, string message)> entries = GetEntries().ToList();
             (DateTime dateTime, string message) updateEntry = entries.Find(e => e.dateTime == dateTime);
-            if (updateEntry != default((DateTime, string)))
+            if (updateEntry == default((DateTime, string)))
             {
-                updateEntry.message = updatedMessage;
-                entries.Insert(entries.IndexOf(entries.Find(e => e.dateTime == dateTime)), updateEntry);
-                ReplaceEntries(entries);
+                throw new ArgumentException("Entry with specified dateTime not found", nameof(dateTime));
             }
             else
             {
-                throw new ArgumentException("Entry with specified dateTime not found", nameof(dateTime));
+                updateEntry.message = message;
+                entries.Insert(entries.IndexOf(entries.Find(e => e.dateTime == dateTime)), updateEntry);
+                ReplaceEntries(entries);
             }
         }
     }
