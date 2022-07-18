@@ -14,16 +14,17 @@ Has methods to change price and compare
 ## IStorage<T> : IEnumerable<T> where T : class, IGood
 
 A storage of items of T
-Has total mass, total price.
-Has methods to fill it and retrieve element by index
+Has TotalMass, Total Price.
+Has methods to fill it, enumerate and retrieve element by index
 
 ## ILogger
 
-A logger which allows retrieving and upadting entries
+A logger which also allows retrieving and updating entries
 
 ## IStorageService<T> : IEnumerable<T> where T : class, IGood
 
 A business logic part which implements all operations with IStorage and ILogger
+Prepared to be used by presentation layer
 
 # Classes
 
@@ -44,9 +45,14 @@ A dairy product which has its own number of days before spoil
 A generic storage class implementing IStorage interface
 Also has operators overloading
 
+## Logger : ILogger
+
+A logger that write entries to file
+
 ## StorageService : IStorageService<T> where T : class, IGood
 
-A class to operate with a storage
+A class implementing business logic to operate with a storage
+Contains IStorage and ILogger
 Needs update because its method of reading from file is tied to Product class
 
 ## View
