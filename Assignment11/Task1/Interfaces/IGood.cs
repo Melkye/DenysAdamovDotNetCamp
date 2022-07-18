@@ -12,11 +12,6 @@ namespace Task1.Interfaces
         double Price { get; }
         double Mass { get; }
         void DecreasePrice(double percent);
-        /// <summary>
-        /// blab
-        /// </summary>
-        /// <param name="percent"></param>
         void IncreasePrice(double percent);
-        //string ToString(); // ???
     }
 }

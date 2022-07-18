@@ -144,3 +144,33 @@
 16.07.2022 20:43:03 Line 5: Unable to parse price to double: 5.5a
 16.07.2022 20:43:03 Line 6: Unable to parse meat category to enum: Secont
 16.07.2022 20:43:03 Line 6: Unable to parse meat type to enum: Weed
+18.07.2022 13:29:20 Line 1: Invalid number of parameters of product
+18.07.2022 13:29:20 Line 4: Invalid number of parameters of product
+18.07.2022 13:29:20 Line 5: Unable to parse price to double: 5.5a
+18.07.2022 13:29:20 Line 6: Unable to parse meat category to enum: Secont
+18.07.2022 13:29:20 Line 6: Unable to parse meat type to enum: Weed
+18.07.2022 13:29:20 Line 1: Invalid number of parameters of product
+18.07.2022 13:29:20 Line 4: Invalid number of parameters of product
+18.07.2022 13:29:20 Line 5: Unable to parse price to double: 5.5a
+18.07.2022 13:29:20 Line 6: Unable to parse meat category to enum: Secont
+18.07.2022 13:29:20 Line 6: Unable to parse meat type to enum: Weed
+18.07.2022 13:58:09 Line 1: Invalid number of parameters of product
+18.07.2022 13:58:09 Line 4: Invalid number of parameters of product
+18.07.2022 13:58:09 Line 5: Unable to parse price to double: 5.5a
+18.07.2022 13:58:09 Line 6: Unable to parse meat category to enum: Secont
+18.07.2022 13:58:09 Line 6: Unable to parse meat type to enum: Weed
+18.07.2022 13:58:24 Line 1: Invalid number of parameters of product
+18.07.2022 13:58:24 Line 4: Invalid number of parameters of product
+18.07.2022 13:58:24 Line 5: Unable to parse price to double: 5.5a
+18.07.2022 13:58:24 Line 6: Unable to parse meat category to enum: Secont
+18.07.2022 13:58:24 Line 6: Unable to parse meat type to enum: Weed
+18.07.2022 13:59:40 Line 1: Invalid number of parameters of product
+18.07.2022 13:59:40 Line 4: Invalid number of parameters of product
+18.07.2022 13:59:40 Line 5: Unable to parse price to double: 5.5a
+18.07.2022 13:59:40 Line 6: Unable to parse meat category to enum: Secont
+18.07.2022 13:59:40 Line 6: Unable to parse meat type to enum: Weed
+18.07.2022 13:59:40 Line 1: Invalid number of parameters of product
+18.07.2022 13:59:40 Line 4: Invalid number of parameters of product
+18.07.2022 13:59:40 Line 5: Unable to parse price to double: 5.5a
+18.07.2022 13:59:40 Line 6: Unable to parse meat category to enum: Secont
+18.07.2022 13:59:40 Line 6: Unable to parse meat type to enum: Weed

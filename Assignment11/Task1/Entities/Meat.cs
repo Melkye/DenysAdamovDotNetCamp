@@ -1,4 +1,5 @@
 ﻿using Task1.Enums;
+using Task1.Settings;
 
 namespace Task1.Entities
 {
@@ -15,36 +16,6 @@ namespace Task1.Entities
         }
         public MeatCategory Category => _category;
         public MeatType Type => _type;
-        //public override void ChangePrice(double changePercent = 0)
-        //{
-        //    if (changePercent != 0)
-        //    {
-        //        double changePercentPerType = 0;
-        //        switch (_type)
-        //        {
-        //            case MeatType.Mutton:
-        //                changePercentPerType = 20;
-        //                break;
-        //            case MeatType.Veal:
-        //                changePercentPerType = 15;
-        //                break;
-        //            case MeatType.Pork:
-        //                changePercentPerType = 10;
-        //                break;
-        //            case MeatType.Chicken:
-        //                changePercentPerType = 5;
-        //                break;
-        //            default:
-        //                changePercentPerType = 0;
-        //                break;
-        //        }
-        //        if (changePercent < 0)
-        //        {
-        //            changePercentPerType = -changePercentPerType;
-        //        }
-        //        base.ChangePrice(changePercent + changePercentPerType);
-        //    }
-        //}
         public override void DecreasePrice(double percent)
         {
             base.DecreasePrice(percent);
@@ -55,7 +26,9 @@ namespace Task1.Entities
         }
         public override string ToString()
         {
-            return base.ToString() + $"{ Category, -30}|{Type, -10}|";
+            return base.ToString() + 
+                $"{ Category, -FormatSettings.MEAT_CATEGORY_PRINT_WIDTH}|" +
+                $"{Type, -FormatSettings.MEAT_TYPE_PRINT_WIDTH}|";
         }
         public override bool Equals(object? obj)
         {

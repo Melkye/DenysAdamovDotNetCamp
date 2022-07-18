@@ -1,3 +1,5 @@
 ﻿using Task1;
 
-Startup.Run();
+Startup startup = new Startup();
+startup.Initialize();
+startup.Run();

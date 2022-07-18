@@ -1,4 +1,6 @@
-﻿namespace Task1.Entities
+﻿using Task1.Settings;
+
+namespace Task1.Entities
 {
     public class DairyProduct : Product
     {
@@ -11,38 +13,6 @@
             _daysBeforeSpoil = daysBeforeSpoil;
         }
         public int DaysBeforeSpoil => _daysBeforeSpoil;
-        //public override void ChangePrice(double changePercent = 0)
-        //{
-        //    if (changePercent >= 0)
-        //    {
-        //        double changePercentPerDayBeforeSpoil = 0;
-        //        if (_daysBeforeSpoil == 1)
-        //        {
-        //            changePercentPerDayBeforeSpoil = 50;
-        //        }
-        //        else if (_daysBeforeSpoil == 2)
-        //        {
-        //            changePercentPerDayBeforeSpoil = 40;
-        //        }
-        //        else if (_daysBeforeSpoil == 3)
-        //        {
-        //            changePercentPerDayBeforeSpoil = 20;
-        //        }
-        //        else if (_daysBeforeSpoil > 3)
-        //        {
-        //            changePercentPerDayBeforeSpoil = 10;
-        //        }
-        //        else if (_daysBeforeSpoil > 6)
-        //        {
-        //            changePercentPerDayBeforeSpoil = 5;
-        //        }
-        //        else if (_daysBeforeSpoil > 9)
-        //        {
-        //            changePercentPerDayBeforeSpoil = 0;
-        //        }
-        //        base.ChangePrice(changePercent + changePercentPerDayBeforeSpoil);
-        //    }
-        //}
         public override void DecreasePrice(double percent)
         {
             base.DecreasePrice(percent);
@@ -53,7 +23,7 @@
         }
         public override string ToString()
         {
-            return base.ToString() + $"{ DaysBeforeSpoil, -30}";
+            return base.ToString() + $"{ DaysBeforeSpoil, -FormatSettings.DAYS_BEFORE_SPOIL_PRINT_WIDTH}";
         }
         public override bool Equals(object? obj)
         {

@@ -1,3 +1,3 @@
-Title     |Price     |Weight (g)|
-Dairy     |$2.20     |20.2      |10                            
-Meat      |$3.30     |30.3      |Highest                       |Veal      |
+Title               |Price     |Mass      |
+Dairy               |$2.20     |20.2      |10                            
+Meat                |$3.30     |30.3      |Highest                       |Veal      |

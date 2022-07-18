@@ -7,42 +7,45 @@ using Task1.Presentation;
 
 namespace Task1
 {
-    internal static class Startup
+    internal class Startup
     {
-        public static void Run()
+        private View _view;
+        public void Initialize()
         {
-            try
+            Product[] products = new Product[6]
             {
-                Product[] products = new Product[6]
-                {
                     new Meat("product 1 - meat", 1.1, 1.1, MeatCategory.Second, MeatType.Pork),
                     new DairyProduct("product 2 - dairy product", 2.2, 2.2, 2),
                     new Meat("product 3 - meat", 3.3, 3.3, MeatCategory.First, MeatType.Chicken),
                     new Meat("product 4 - meat", 4.4, 4.4, MeatCategory.Highest, MeatType.Veal),
                     new DairyProduct("product 5 - dairy product", 5.5, 5.5, 5),
                     new DairyProduct("product 6 - dairy product", 6.6, 6.6, 6)
-                };
-                Storage<Product> storage1 = new(products);
-                Logger logger = new("../../../Data/Logs.txt");
-                string storageSource = "../../../Data/StorageSource.txt";
-                string storageDestination = "../../../Data/StorageDestination.txt";
-                ProductStorageService storageService = new(storage1, logger, storageSource, storageDestination);
+            };
+            Storage<Product> storage1 = new(products);
+            Logger logger = new("../../../Data/Logs.txt");
+            string storageSource = "../../../Data/StorageSource.txt";
+            string storageDestination = "../../../Data/StorageDestination.txt";
+            StorageService<Product> storageService = new(storage1, logger, storageSource, storageDestination);
 
-                View view = new(storageService);
+            _view = new(storageService);
+        }
+        public void Run()
+        {
+            try
+            {
+                _view.PrintDetails();
 
-                //view.FillFromFile();
+                _view.FillFromFile();
+                _view.PrintDetails();
 
-                //view.SaveToFile();
+                _view.WriteReportToFile();
 
-                view.PrintDetails();
-
-                Storage<Product> storage2 = new(products[..3]);
-
-                IStorage<Product> whaaat1 = storage1 / storage2;
-                IStorage<Product> whaaat2 = (IStorage<Product>)storage1.Except(storage2);
-
+                _view.IncreasePrice(10);
+                _view.PrintDetails();
+                _view.DecreasePrice(10);
+                _view.PrintDetails();
             }
-            catch (ArgumentException ex) // change exception type
+            catch (ArgumentException ex)
             {
                 Console.WriteLine(ex.Message);
             }

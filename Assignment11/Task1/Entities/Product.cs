@@ -1,8 +1,9 @@
 ﻿using Task1.Interfaces;
+using Task1.Settings;
 
 namespace Task1.Entities
 {
-    public abstract class Product : IGood // keep abstract?
+    public abstract class Product : IGood
     {
         protected string _title;
         protected double _price;
@@ -11,6 +12,10 @@ namespace Task1.Entities
         { }
         protected Product(Product copyProduct) : this(copyProduct.Title, copyProduct.Price, copyProduct.Mass)
         { }
+        // TODO: child constructors throw exception because of this
+        // and this throws because of properties
+        // how this should me documented?
+        // TODO: is it ok that constructors throws an exception?
         protected Product(string title, double price, double mass)
         {
             Title = title;
@@ -55,6 +60,10 @@ namespace Task1.Entities
                 }
             }
         }
+        /// <summary>
+        /// The product's mass
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
         public double Mass
         {
             get => _mass;
@@ -75,7 +84,7 @@ namespace Task1.Entities
         /// </summary>
         /// <param name="percent">A part of current price which will be subtracted</param>
         /// <exception cref="ArgumentException"></exception>
-        public virtual void DecreasePrice(double percent) // what if price will be 0 or less? exception should pe thrown in Price
+        public virtual void DecreasePrice(double percent)
         {
             if (percent < 0)
             {
@@ -110,9 +119,11 @@ namespace Task1.Entities
         {
             return (obj as Product)?.Title.CompareTo(Title) ?? -1;
         }
-        public override string ToString() // change constants
+        public override string ToString()
         {
-            return $"{Title,-10}|{Price,-10:C2}|{Mass,-10}|";
+            return $"{Title,-FormatSettings.TITLE_PRINT_WIDTH}|" +
+                $"{Price,-FormatSettings.PRICE_PRINT_WIDTH:C2}|" +
+                $"{Mass,-FormatSettings.MASS_PRINT_WIDTH}|";
         }
     }
 }

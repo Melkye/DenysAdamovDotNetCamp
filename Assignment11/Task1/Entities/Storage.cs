@@ -3,11 +3,10 @@ using Task1.Interfaces;
 
 namespace Task1.Entities
 {
-    internal class Storage<T> : IStorage<T> where T : class, IGood //, IEnumerable<Product>
+    internal class Storage<T> : IStorage<T> where T : class, IGood
     {
-        // TODO IDisposable ? for Enumerator?
         #region Fields
-        private List<T> _items; // where IGood
+        private List<T> _items;
         #endregion Fields
         #region Constructors
         public Storage() : this(default)
@@ -15,21 +14,6 @@ namespace Task1.Entities
         public Storage(IEnumerable<T> items)
         {
             Fill(items);
-
-            //if (items is null)
-            //{
-            //    throw new ArgumentNullException(nameof(items), "Can't fill with emptiness");
-            //}
-            //else
-            //{
-            //    // further text may be wrong
-
-            //    // this copies Product instances' references to _items
-            //    // suppose need to create new instances
-            //    // but their real type can be not base but inherited
-            //    // so declaring a new instance of type Product is not correct
-            //    _items = new(items);
-            //}
         }
         #endregion Constructors
         #region Properties
@@ -37,7 +21,6 @@ namespace Task1.Entities
         public double TotalPrice => _items.Sum(p => p.Price);
         #endregion Properties
         #region Indexers
-        // TODO: return T or IGood?
         public T this[int index]
         {
             // returning an internal object and using base reference
@@ -58,7 +41,6 @@ namespace Task1.Entities
         }
         #endregion Indexers
         #region Methods
-        // TODO: remove Fill and move validation logic to constructor
         public void Fill(IEnumerable<T> items)
         {
             if (items is null)
@@ -67,16 +49,14 @@ namespace Task1.Entities
             }
             else
             {
-                // further text may be wrong
-
                 // this copies Product instances' references to _items
                 // suppose need to create new instances
                 // but their real type can be not base but inherited
-                // so declaring a new instance of type Product is not correct
+                // so declaring a new instance of type T is not correct
                 _items = new(items);
             }
         }
-        // how to hande exceptions and document which ones methods throws when working through interface?
+        // TODO: how to hande exceptions and document which ones methods throws when working through interface?
         /// <summary>
         /// Decreases prices for each item
         /// </summary>
@@ -89,7 +69,6 @@ namespace Task1.Entities
                 item.DecreasePrice(percent);
             }
         }
-        // how to hande exceptions and document which ones methods throws when working through interface?
         /// <summary>
         /// Increases prices for each item
         /// </summary>
@@ -102,36 +81,67 @@ namespace Task1.Entities
                 item.IncreasePrice(percent);
             }
         }
-        public IEnumerable<T> Except(IEnumerable<T> other) // IEnumerable<T>?
+        /// <summary>
+        /// Does except set operation 
+        /// </summary>
+        /// <param name="other">a storage to except with</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public IEnumerable<T> Except(IEnumerable<T> other)
         {
-            return new Storage<T>(_items.Except((other as Storage<T>)._items)); // what if not Storage?
+            if (other is Storage<T> otherStorage)
+            {
+                return new Storage<T>(_items.Except(otherStorage._items));
+            }
+            else
+            {
+                throw new ArgumentException("Unable to except with non Storage");
+            }
         }
+        /// <summary>
+        /// Does intersect set operation 
+        /// </summary>
+        /// <param name="other">a storage to intersect with</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public IEnumerable<T> Intersect(IEnumerable<T> other)
         {
-            return new Storage<T>(_items.Intersect((other as Storage<T>)._items));
+            if (other is Storage<T> otherStorage)
+            {
+                return new Storage<T>(_items.Intersect(otherStorage._items));
+            }
+            else
+            {
+                throw new ArgumentException("Unable to intersect with non Storage");
+            }
         }
+        /// <summary>
+        /// Does union set operation 
+        /// </summary>
+        /// <param name="other">a storage to union with</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public IEnumerable<T> Union(IEnumerable<T> other)
         {
-            return new Storage<T>(_items.Union((other as Storage<T>)._items));
+            if (other is Storage<T> otherStorage)
+            {
+                return new Storage<T>(_items.Union(otherStorage._items));
+            }
+            else
+            {
+                throw new ArgumentException("Unable to union with non Storage");
+            }
         }
-
-        //IEnumerator IEnumerable<T>.GetEnumerator()
-        //{
-        //    return ((IEnumerable)_items).GetEnumerator();
-        //}
-
         public IEnumerator<T> GetEnumerator()
         {
             return ((IEnumerable<T>)_items).GetEnumerator();
         }
-
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable)_items).GetEnumerator();
         }
         #endregion Methods
         #region Operator Overloads
-        // TODO: Storage<T> or IEnumerable<T>?
         public static Storage<T> operator /(Storage<T> left, Storage<T> right)
         {
             return (Storage<T>)left.Except(right);
