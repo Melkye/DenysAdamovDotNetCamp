@@ -27,6 +27,91 @@ namespace Task1
             string storageDestination = "../../../Data/StorageDestination.txt";
             StorageService<Product> storageService = new(storage1, logger, storageSource, storageDestination);
 
+            storageService.RegisterReadStorageFromFile((storageSourceFile, logger) =>
+            {
+                using StreamReader sr = new(storageSourceFile);
+                List<Product> products = new();
+                int lineNumber = 0;
+                while (!sr.EndOfStream)
+                {
+                    string? line = sr.ReadLine();
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        string[] productInfo = line.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                        if (productInfo.Length != 4 && productInfo.Length != 5)
+                        {
+                            logger.Log($"Line {lineNumber + 1}: Invalid number of parameters of product");
+                        }
+                        else
+                        {
+                            bool isProductValid = true;
+                            string title = char.ToUpper(productInfo[0][0]) + productInfo[0][1..];
+
+                            bool successfulInput = double.TryParse(productInfo[1], out double price);
+                            if (!successfulInput)
+                            {
+                                logger.Log($"Line {lineNumber + 1}: Unable to parse price to double: {productInfo[1]}");
+                                isProductValid = false;
+                            }
+
+                            successfulInput = double.TryParse(productInfo[2], out double weight);
+                            if (!successfulInput)
+                            {
+                                logger.Log($"Line {lineNumber + 1}: Unable to parse weight to double: {productInfo[2]}");
+                                isProductValid = false;
+                            }
+
+                            if (productInfo.Length == 4)
+                            {
+                                successfulInput = int.TryParse(productInfo[3], out int daysBeforeSpoil);
+                                if (!successfulInput)
+                                {
+                                    logger.Log($"Line {lineNumber + 1}: Unable to parse daysBeforeSpoil to int: {productInfo[3]}");
+                                    isProductValid = false;
+                                }
+                                if (isProductValid)
+                                {
+                                    products.Add(new DairyProduct(title, price, weight, daysBeforeSpoil));
+                                }
+                            }
+                            else
+                            {
+                                MeatCategory category = MeatCategory.Highest;
+                                successfulInput = Enum.TryParse(typeof(MeatCategory), productInfo[3], out object? catObj);
+                                if (!successfulInput)
+                                {
+                                    logger.Log($"Line {lineNumber + 1}: Unable to parse meat category to enum: {productInfo[3]}");
+                                    isProductValid = false;
+                                }
+                                else
+                                {
+                                    category = (MeatCategory)catObj;
+                                }
+
+                                MeatType type = MeatType.Chicken;
+                                successfulInput = Enum.TryParse(typeof(MeatType), productInfo[4], out object? typeObj);
+                                if (!successfulInput)
+                                {
+                                    logger.Log($"Line {lineNumber + 1}: Unable to parse meat type to enum: {productInfo[4]}");
+                                    isProductValid = false;
+                                }
+                                else
+                                {
+                                    type = (MeatType)typeObj;
+                                }
+
+                                if (isProductValid)
+                                {
+                                    products.Add(new Meat(title, price, weight, category, type));
+                                }
+                            }
+                        }
+                    }
+                    lineNumber++;
+                }
+                return products;
+            });
+
             _view = new(storageService);
         }
         public void Run()

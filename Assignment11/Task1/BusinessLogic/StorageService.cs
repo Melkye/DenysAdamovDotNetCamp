@@ -1,19 +1,17 @@
 ﻿using System.Collections;
 using Task1.Interfaces;
-using Task1.Entities;
-using Task1.Enums;
 using Task1.Settings;
 
 namespace Task1.BusinessLogic
 {
-    // TODO: it is not fully generic because reading from file is for Product
-    // suppose implementation of reading from file via delegate
     internal class StorageService<T> : IStorageService<T> where T : class, IGood
     {
         private readonly ILogger _logger;
         private readonly IStorage<T> _storage;
         private readonly string _sourceFilePath;
         private readonly string _destinationFilePath;
+
+        private Func<string, ILogger, IEnumerable<T>> _readStorageFromFile;
         public StorageService(IStorage<T> storage, ILogger logger, string sourceFilePath, string destinationFilePath)
         {
             _storage = storage;
@@ -116,91 +114,13 @@ namespace Task1.BusinessLogic
                 throw;
             }
         }
-        // TODO: use delegate here for specific realization of IGood and IStorage
-        // because now it is only for Product
         public void FillStorageFromFile()
         {
-            using StreamReader sr = new(_sourceFilePath);
-            List<Product> products = new();
-            int lineNumber = 0;
-            while (!sr.EndOfStream)
+            if (_readStorageFromFile is not null)
             {
-                string? line = sr.ReadLine();
-                if (!string.IsNullOrEmpty(line))
-                {
-                    string[] productInfo = line.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                    if (productInfo.Length != 4 && productInfo.Length != 5)
-                    {
-                        _logger.Log($"Line {lineNumber + 1}: Invalid number of parameters of product");
-                    }
-                    else
-                    {
-                        bool isProductValid = true;
-                        string title = char.ToUpper(productInfo[0][0]) + productInfo[0][1..];
-
-                        bool successfulInput = double.TryParse(productInfo[1], out double price);
-                        if (!successfulInput)
-                        {
-                            _logger.Log($"Line {lineNumber + 1}: Unable to parse price to double: {productInfo[1]}");
-                            isProductValid = false;
-                        }
-
-                        successfulInput = double.TryParse(productInfo[2], out double weight);
-                        if (!successfulInput)
-                        {
-                            _logger.Log($"Line {lineNumber + 1}: Unable to parse weight to double: {productInfo[2]}");
-                            isProductValid = false;
-                        }
-
-                        if (productInfo.Length == 4)
-                        {
-                            successfulInput = int.TryParse(productInfo[3], out int daysBeforeSpoil);
-                            if (!successfulInput)
-                            {
-                                _logger.Log($"Line {lineNumber + 1}: Unable to parse daysBeforeSpoil to int: {productInfo[3]}");
-                                isProductValid = false;
-                            }
-                            if (isProductValid)
-                            {
-                                products.Add(new DairyProduct(title, price, weight, daysBeforeSpoil));
-                            }
-                        }
-                        else
-                        {
-                            MeatCategory category = MeatCategory.Highest;
-                            successfulInput = Enum.TryParse(typeof(MeatCategory), productInfo[3], out object? catObj);
-                            if (!successfulInput)
-                            {
-                                _logger.Log($"Line {lineNumber + 1}: Unable to parse meat category to enum: {productInfo[3]}");
-                                isProductValid = false;
-                            }
-                            else
-                            {
-                                category = (MeatCategory)catObj;
-                            }
-
-                            MeatType type = MeatType.Chicken;
-                            successfulInput = Enum.TryParse(typeof(MeatType), productInfo[4], out object? typeObj);
-                            if (!successfulInput)
-                            {
-                                _logger.Log($"Line {lineNumber + 1}: Unable to parse meat type to enum: {productInfo[4]}");
-                                isProductValid = false;
-                            }
-                            else
-                            {
-                                type = (MeatType)typeObj;
-                            }
-
-                            if (isProductValid)
-                            {
-                                products.Add(new Meat(title, price, weight, category, type));
-                            }
-                        }
-                    }
-                }
-                lineNumber++;
+                IEnumerable<T> items = _readStorageFromFile(_sourceFilePath, _logger);
+                _storage.Fill(items);
             }
-            _storage.Fill((IEnumerable<T>)products);
         }
         public void WriteStorageReportToFile()
         {
@@ -212,6 +132,10 @@ namespace Task1.BusinessLogic
             {
                 sw.WriteLine(item);
             }
+        }
+        public void RegisterReadStorageFromFile(Func<string, ILogger, IEnumerable<T>> methodToCall)
+        {
+            _readStorageFromFile = methodToCall;
         }
 
         public IEnumerator<T> GetEnumerator()

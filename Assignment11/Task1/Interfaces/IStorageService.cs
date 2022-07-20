@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Task1.Interfaces
+﻿namespace Task1.Interfaces
 {
     internal interface IStorageService<T> : IEnumerable<T> where T : class, IGood
     {
@@ -15,6 +9,7 @@ namespace Task1.Interfaces
         void IncreasePrice(double percent);
         public void FillStorageFromFile();
         public void WriteStorageReportToFile();
+        public void RegisterReadStorageFromFile(Func<string, ILogger, IEnumerable<T>> methodToCall);
         public IEnumerable<(DateTime, string)> GetLogEntries();
         public IEnumerable<(DateTime, string)> GetLogEntries(DateTime date);
         public void ReplaceLogEntries(IEnumerable<(DateTime, string)> newEntries);

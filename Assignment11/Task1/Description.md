@@ -52,8 +52,7 @@ A logger that write entries to file
 ## StorageService : IStorageService<T> where T : class, IGood
 
 A class implementing business logic to operate with a storage
-Contains IStorage and ILogger
-Needs update because its method of reading from file is tied to Product class
+Contains IStorage and ILogger instances
 
 ## View
 
