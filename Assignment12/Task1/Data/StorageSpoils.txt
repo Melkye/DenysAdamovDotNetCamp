@@ -1,0 +1,2 @@
+Title               |Price     |Mass (g)  |Best before |
+Dairy               |$2.20     |20.2      |7/15/2022   |10        

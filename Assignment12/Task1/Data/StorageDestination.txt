@@ -1,0 +1,4 @@
+Title               |Price     |Mass (g)  |Best before |
+Meat                |$3.30     |30.3      |7/31/2022   |Highest   |Veal      |
+Dairy2              |$5.50     |50.5      |7/31/2022   |5         
+Meat2               |$6.60     |60.6      |7/31/2022   |Second    |Chicken   |

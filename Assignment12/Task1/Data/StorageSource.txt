@@ -1,0 +1,4 @@
+dairy 2.2 20.2 7/15/2022 10
+meat 3.3 30.3 7/31/2022 Highest Veal
+dairy2 5.5 50.5 7/31/2022 5
+meat2 6.6 60.6 7/31/2022 Second Chicken
